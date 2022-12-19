@@ -120,50 +120,50 @@ CreateLevels()
 
 	for(i=1;i<37;i++)
 	{	
-		levels[i].score = 0; levels[i].star1Score = 10; levels[i].star2Score = 50; levels[i].star3Score = 100; levels[i].xSize = 6; levels[i].ySize = 6; levels[i].maxLap = 10; levels[i].condyNumber = 6; levels[i].extras = 1;
+		levels[i].score = 0; levels[i].star1Score = 10; levels[i].star2Score = 50; levels[i].star3Score = 100; levels[i].xSize = 6; levels[i].ySize = 6; levels[i].maxLap = 20; levels[i].condyNumber = 6; levels[i].extras = 1;
 	}
 	
 	i=1; levels[i].star1Score = 1;	levels[i].star2Score = 10;	levels[i].star3Score = 30;	levels[i].xSize = 3;	levels[i].ySize = 3;	levels[i].maxLap = 10;	levels[i].condyNumber = 4;	levels[i].extras = 0;
 	i=2; levels[i].star1Score = 1;	levels[i].star2Score = 10;	levels[i].star3Score = 30;	levels[i].xSize = 4;	levels[i].ySize = 4;	levels[i].maxLap = 10;	levels[i].condyNumber = 4;	levels[i].extras = 0;
-	i=3; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 5;	levels[i].ySize = 3;	levels[i].maxLap = 20;	levels[i].condyNumber = 5;	levels[i].extras = 0;
-	i=4; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 4;	levels[i].ySize = 6;	levels[i].maxLap = 20;	levels[i].condyNumber = 5;	levels[i].extras = 0;
-	i=5; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 5;	levels[i].ySize = 5;	levels[i].maxLap = 20;	levels[i].condyNumber = 6;	levels[i].extras = 0;
-	i=6; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-/*
-	i=7; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=8; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=9; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
+	i=3; levels[i].xSize = 5;	levels[i].ySize = 3;	levels[i].condyNumber = 5;	levels[i].extras = 0;
+	i=4; levels[i].xSize = 4;	levels[i].ySize = 6;	levels[i].condyNumber = 5;	levels[i].extras = 0;
+	i=5; levels[i].xSize = 5;	levels[i].ySize = 5;    levels[i].extras = 0;
+	i=6; levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 15;	
 
-	i=10; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=11; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=12; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=13; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=14; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=15; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=16; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=17; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=18; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-/*	i=19; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
+	i=7; levels[i].xSize = 4;	levels[i].ySize = 6;
+	i=8; levels[i].xSize = 6;	levels[i].ySize = 3;
+	i=9; levels[i].xSize = 5;	levels[i].ySize = 5;
 
-	i=20; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=21; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=22; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=23; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=24; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=25; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=26; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=27; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=28; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=29; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
+	i=10; levels[i].xSize = 3;	levels[i].ySize = 3;
+	i=11; levels[i].xSize = 2;	levels[i].ySize = 6;
+	i=12; levels[i].xSize = 6;	levels[i].ySize = 2;
+	i=13; levels[i].xSize = 5;	levels[i].ySize = 4; levels[i].condyNumber = 3; 
+	i=14; levels[i].xSize = 6;	levels[i].ySize = 6; levels[i].condyNumber = 3; levels[i].extras = 0;
+	i=15; levels[i].xSize = 4;	levels[i].ySize = 4; levels[i].maxLap = 10;
+	i=16; levels[i].xSize = 4;	levels[i].ySize = 6; levels[i].maxLap = 10; levels[i].extras = 0; 
+	i=17; levels[i].xSize = 2;	levels[i].ySize = 4;
+	i=18; levels[i].xSize = 3;	levels[i].ySize = 5;
+	i=19; levels[i].xSize = 4;	levels[i].ySize = 6;
 
-	i=30; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=31; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=32; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=33; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=34; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=35; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-	i=36; levels[i].star1Score = 10;	levels[i].star2Score = 50;	levels[i].star3Score = 100;	levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 10;	levels[i].condyNumber = 6;	levels[i].extras = 1;
-*/
+	i=20; levels[i].xSize = 6;	levels[i].ySize = 6;
+	i=21; levels[i].xSize = 6;	levels[i].ySize = 6;
+	i=22; levels[i].xSize = 6;	levels[i].ySize = 6;
+	i=23; levels[i].xSize = 6;	levels[i].ySize = 6;
+	i=24; levels[i].xSize = 6;	levels[i].ySize = 6;
+	i=25; levels[i].xSize = 6;	levels[i].ySize = 6;
+	i=26; levels[i].xSize = 6;	levels[i].ySize = 6;
+	i=27; levels[i].xSize = 6;	levels[i].ySize = 6;
+	i=28; levels[i].xSize = 6;	levels[i].ySize = 6;
+	i=29; levels[i].xSize = 6;	levels[i].ySize = 6;
+
+	i=30; levels[i].xSize = 6;	levels[i].ySize = 6;
+	i=31; levels[i].xSize = 6;	levels[i].ySize = 6;
+	i=32; levels[i].xSize = 6;	levels[i].ySize = 6;
+	i=33; levels[i].xSize = 6;	levels[i].ySize = 6;
+	i=34; levels[i].xSize = 6;	levels[i].ySize = 6;
+	i=35; levels[i].xSize = 6;	levels[i].ySize = 6;
+	i=36; levels[i].xSize = 6;	levels[i].ySize = 6;
+
 }
 //}
 
