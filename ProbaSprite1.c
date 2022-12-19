@@ -42,13 +42,13 @@ struct GameLevel
 };
 
 #define      SN     60
-#define      speed   2
+#define      speed   1
 
 
 struct GOBJ gameObjects[SN];
 struct GOBJ *goIndex[SN];
 
-struct GameLevel levels[36];
+struct GameLevel levels[37];
 
 char actualLevel[SN];
 char lastDrawnlevel[SN];
@@ -70,12 +70,14 @@ int startY;
 int lap;
 int level;
 int levelScore=0;
-int fullScore=0;
+
 
 int levelCandyNumber = 0;
 int levelExtras = 0;
 
 int deep = 1;
+
+int currentIndex;
 
 struct GOBJ *ptr;
 //}
@@ -88,40 +90,89 @@ main()
 	DbAssignRenderToVideo();
 	DbRandomize();
 	DbInitFont(KKF);
-	DbSetFontParam(FNT_COLOR, COLOR_WHITE); // A betűk színe
-	DbSetFontParam(FNT_BACKCOLOR, COLOR_DARKBLUE);  // Átlátszó hűttér
+	DbSetFontParam(FNT_COLOR, COLOR_WHITE); 
+	DbSetFontParam(FNT_BACKCOLOR, COLOR_DARKBLUE);  
 
 	ptr = gameObjects;
 
 	//MainScreen();
-	LevelSelector();
-
-	//StartLevel(6,6,20, 6, 1);
-	//StartLevel(6,4,20, 6, 1);
+	CreateLevels();
+	while(1) LevelSelector();
 
 	DbCloseGameLib();
 }
 //}
 
+//{-------------------------- ClearScreen --------------------------------
+ClearScreen()
+{
+	DbFillBox(0,0,64,255,COLOR_DARKBLUE);
+}
+//}
 
 //{-------------------------- CreateLevels --------------------------------
 CreateLevels()
 {
 	int i;
-	for(i=0;i<36;i++)
+	for(i=1;i<37;i++)
 	{
 		levels[i].score = 0;
 	}
 
-	levels[0].score = 0;
-	levels[0].star1Score = 1;
-	levels[0].star2Score = 10;
-	levels[0].star3Score = 30;
-	levels[0].xSize = 3;
-	levels[0].ySize = 3;
-	levels[0].maxLap = 10;
-	levels[0].condyNumber = 4;
-	levels[0].extras = 0;
+	levels[1].star1Score = 1;
+	levels[1].star2Score = 10;
+	levels[1].star3Score = 30;
+	levels[1].xSize = 3;
+	levels[1].ySize = 3;
+	levels[1].maxLap = 10;
+	levels[1].condyNumber = 4;
+	levels[1].extras = 0;
+
+	levels[2].star1Score = 1;
+	levels[2].star2Score = 10;
+	levels[2].star3Score = 30;
+	levels[2].xSize = 4;
+	levels[2].ySize = 4;
+	levels[2].maxLap = 10;
+	levels[2].condyNumber = 4;
+	levels[2].extras = 0;
+
+	levels[3].star1Score = 10;
+	levels[3].star2Score = 50;
+	levels[3].star3Score = 100;
+	levels[3].xSize = 5;
+	levels[3].ySize = 3;
+	levels[3].maxLap = 20;
+	levels[3].condyNumber = 5;
+	levels[3].extras = 0;
+
+	levels[4].star1Score = 10;
+	levels[4].star2Score = 50;
+	levels[4].star3Score = 100;
+	levels[4].xSize = 4;
+	levels[4].ySize = 6;
+	levels[4].maxLap = 20;
+	levels[4].condyNumber = 5;
+	levels[4].extras = 0;
+
+	levels[5].star1Score = 10;
+	levels[5].star2Score = 50;
+	levels[5].star3Score = 100;
+	levels[5].xSize = 5;
+	levels[5].ySize = 5;
+	levels[5].maxLap = 20;
+	levels[5].condyNumber = 6;
+	levels[5].extras = 0;
+
+	levels[6].star1Score = 10;
+	levels[6].star2Score = 50;
+	levels[6].star3Score = 100;
+	levels[6].xSize = 6;
+	levels[6].ySize = 6;
+	levels[6].maxLap = 10;
+	levels[6].condyNumber = 6;
+	levels[6].extras = 1;
+
 }
 //}
 
@@ -130,7 +181,8 @@ CreateLevels()
 //{-------------------------- MainScreen --------------------------------
 MainScreen()
 {
-	DrawSprite2(0,0,16,59);
+	ClearScreen();
+	//DrawSprite2(0,0,16,59);
 	DrawCoolString(5,200,"MADE BY: ANYSTONE", 7);
 	DrawCoolString(5,210,"POWERED BY: DOBERDO BBROTHERS", 7);
 	WaitForKeyPress(KEY_SPACE);
@@ -148,27 +200,54 @@ LevelSelector()
 	int oly;
 	char key;
 	int index;
+	int i;
+	int fullscore;
+	int fullstars;
+
+	ptr = gameObjects;
 
 	plx = 0;
 	ply = 0;
 
-	DrawSprite2(0,0,15,59);
+	ClearScreen();
+	//DrawSprite2(0,0,15,59);
+
+	fullscore = 0;
+	fullstars = 0;
+
+	for(i=1;i<37;i++)
+	{
+		fullscore+=levels[i].score;
+		if(levels[i].score >= levels[i].star1Score) fullstars++;
+		if(levels[i].score >= levels[i].star2Score) fullstars++;
+		if(levels[i].score >= levels[i].star3Score) fullstars++;
+	}
+	
+	DrawCoolString(0,0, "FULLSCORE:", 4);
+	DrawCoolString(20,0, itos(fullscore),2);
+	DrawCoolString(36,0, "FULLSTARS:",4);
+	DrawCoolString(56,0, itos(fullstars),2);
 
 	for(lx=0;lx<6;lx++)
 	{
 		for(ly=0;ly<6;ly++)
 		{
 			index = ly*6+lx+1;
-			if(index<35 && levels[index+1].score==0)
-			{
-				DbSetFontParam(FNT_COLOR, COLOR_GRAY);
-			}
-			else
+			if(index<2 || levels[index-1].score>0)
 			{
 				DbSetFontParam(FNT_COLOR, COLOR_WHITE);
 			}
+			else
+			{
+				DbSetFontParam(FNT_COLOR, COLOR_GRAY);
+			}
 
 			DbDrawStrEx(11+lx*8,40+ly*30,itos(index));
+
+			if(levels[index].score >= levels[index].star1Score) DrawSprite2(10+lx*8,50+ly*30,15,59);
+			if(levels[index].score >= levels[index].star2Score) DrawSprite2(12+lx*8,50+ly*30,15,59);
+			if(levels[index].score >= levels[index].star3Score) DrawSprite2(14+lx*8,50+ly*30,15,59);
+
 		}
 	}
 
@@ -203,7 +282,13 @@ LevelSelector()
 				    plx++;
 				    break;
 				case ' ':
-				    //todo selectlevel
+					index = ply*6+plx+1;
+					if(index<2 || levels[index-1].score>0)
+					{
+						currentIndex = index;
+						StartLevel(index);
+						return;
+					}
 				    break;
 			}
 			
@@ -223,7 +308,7 @@ LevelSelector()
 }
 //}
 
-//-------------------------- DrawCoolString --------------------------------
+//{-------------------------- DrawCoolString --------------------------------
 DrawCoolString(int x, int y, char* text, int textSpeed)
 {
 	DrawCooStringPart(x, y, text, textSpeed, COLOR_BLACK); 
@@ -232,20 +317,36 @@ DrawCoolString(int x, int y, char* text, int textSpeed)
 	DrawCooStringPart(x, y, text, textSpeed, COLOR_YELLOW); 
 	DrawCooStringPart(x, y, text, textSpeed, COLOR_WHITE); 
 }
+//}
 
-//-------------------------- DrawCooStringPart --------------------------------
+//{-------------------------- DrawCooStringPart --------------------------------
 DrawCooStringPart(int x, int y, char* text, int textSpeed, int textcolor)
 {
 	DbSetFontParam(FNT_COLOR, textcolor); 
 	DbDrawStrEx(x,y,text);
 	Sleep(textSpeed); 
 }
+//}
 
-//-------------------------- StartLevel --------------------------------
-StartLevel(int lx, int ly, int maxLap, int candyNumber, int extras)
+//{-------------------------- StartLevel --------------------------------
+StartLevel(int index)
 {
+	int lx;
+	int ly;
+	int maxLap;
+	int candyNumber;
+	int extras;
+
 	int i;
 	char key;
+
+	ptr = gameObjects;
+
+	lx = levels[index].xSize;
+	ly = levels[index].ySize;
+	maxLap = levels[index].maxLap;
+	candyNumber = levels[index].condyNumber;
+	extras = levels[index].extras;
 
 	posx = 0;
 	posy = 0;
@@ -262,7 +363,8 @@ StartLevel(int lx, int ly, int maxLap, int candyNumber, int extras)
 	levelExtras = extras;
 	ptr = gameObjects;
 
-	DrawSprite2(0, 0, 14, 59);
+	ClearScreen();
+	//DrawSprite2(0, 0, 15, 59);
 	DrawSprite2(40, 0,  9, 59);
 	DrawSprite2(48, 0,  9, 59);
 	DrawSprite2(56, 0,  9, 59);
@@ -309,29 +411,32 @@ StartLevel(int lx, int ly, int maxLap, int candyNumber, int extras)
 		}
 	}
 
-	fullScore+=levelScore;
+	if(levelScore > levels[index].score) levels[index].score = levelScore;
 }
+//}
 
-
-//-------------------------- Level --------------------------------
+//{-------------------------- Level --------------------------------
 Level(int x, int y)
 {
 	return actualLevel[y*maxSizeX+x];
 }
+//}
 
-//-------------------------- SetLevel --------------------------------
+//{-------------------------- SetLevel --------------------------------
 SetLevel(int x, int y, char c)
 {
 	actualLevel[y*maxSizeX+x] = c;
 }
+//}
 
-//-------------------------- LastDrawnlevel --------------------------------
+//{-------------------------- LastDrawnlevel --------------------------------
 LastDrawnlevel(int x, int y)
 {
 	return lastDrawnlevel[y*maxSizeX+x];
 }
+//}
 
-//-------------------------- DrawTable --------------------------------
+//{-------------------------- DrawTable --------------------------------
 DrawTable(char withWait, char fast );
 {
    int x;
@@ -339,6 +444,8 @@ DrawTable(char withWait, char fast );
    int i;
    int xonscreen;
    int yonscreen;
+   char* space;
+   space = "   ";
 
    ptr = gameObjects;
 
@@ -402,14 +509,16 @@ DrawTable(char withWait, char fast );
 	
 	if (withWait) Wait(fast);
 
-	if(levelScore>10) DrawSprite2(40, 0,  8, 59);
-	if(levelScore>50) DrawSprite2(48, 0,  8, 59);
-	if(levelScore>100) DrawSprite2(56, 0,  8, 59);
+	if(levelScore>=levels[currentIndex].star1Score) DrawSprite2(40, 0,  8, 59);
+	if(levelScore>=levels[currentIndex].star2Score) DrawSprite2(48, 0,  8, 59);
+	if(levelScore>=levels[currentIndex].star3Score) DrawSprite2(56, 0,  8, 59);
 	DbDrawStrEx(12,0, itos(levelScore));
-	DbDrawStrEx(33,0, itos(lap));
+	space = itos(lap);
+	DbDrawStrEx(33,0, strcat(space, " "));
 }
+//}
 
-//-------------------------- DrawSprite --------------------------------
+//{-------------------------- DrawSprite --------------------------------
 DrawSprite(int x, int y, int candy, int index)
 {
 	int xonscreen;
@@ -425,23 +534,26 @@ DrawSprite(int x, int y, int candy, int index)
 
 	return goIndex[index];
 }
+//}
 
+//{-------------------------- DrawSprite2 --------------------------------
 DrawSprite2(int x, int y, int candy, int index)
 {
-	goIndex[index] = DbInitGameObject(++ptr,x,y,candy,GOFLG_VISIBLE, DbSprite16c8,0,0);
+	goIndex[index] = DbInitGameObject(ptr,x,y,candy,GOFLG_VISIBLE, DbSprite16c8,0,0);
 	
 	DbClipSprite(goIndex[index]);
 	DbDrawSprite(goIndex[index]);
 }
+//}
 
-//-------------------------- DrawSprite3 --------------------------------
+//{-------------------------- DrawSprite3 --------------------------------
 DrawSprite3(int x, int y, int candy, int index)
 {
 	int xonscreen;
 	int yonscreen;
 
-	xonscreen= x*8 + startX;
-	yonscreen= y*30 + startY;
+	xonscreen= x*8;
+	yonscreen= y*30;
 	
 	goIndex[index] = DbInitGameObject(ptr,xonscreen,yonscreen,candy,GOFLG_VISIBLE, DbSprite16c8,0,0);
 	
@@ -450,8 +562,9 @@ DrawSprite3(int x, int y, int candy, int index)
 
 	return goIndex[index];
 }
+//}
 
-//-------------------------- ChangeMoveMode --------------------------------
+//{-------------------------- ChangeMoveMode --------------------------------
 ChangeMoveMode()
 {
  	char temp;
@@ -494,11 +607,16 @@ ChangeMoveMode()
 				{
 					for(yy=0;yy<maxSizeY;yy++)
 					{
-						if(temp==Level(xx, yy)) SetLevel(xx, yy, 'C');
+						if(temp==Level(xx, yy)) 
+						{
+							SetLevel(xx, yy, 'C');
+							levelScore+=2;
+						}
 					}
 				}
 				
 				SetLevel(selectedPosx,selectedPosy, 'C');
+				levelScore+=2;
 			}
 			else if (Level(posx,posy)=='X')
 			{	
@@ -507,6 +625,7 @@ ChangeMoveMode()
 					for(xx=0;xx<maxSizeX;xx++)
 					{
 						SetLevel(xx, selectedPosy, 'C');
+						levelScore+=2;
 					}
 				}
 				if(posy!=selectedPosy)
@@ -514,6 +633,7 @@ ChangeMoveMode()
 					for(yy=0;yy<maxSizeY;yy++)
 					{
 						SetLevel(selectedPosx, yy, 'C');
+						levelScore+=2;
 					}
 				}
 
@@ -525,6 +645,7 @@ ChangeMoveMode()
 					for(xx=0;xx<maxSizeX;xx++)
 					{
 						SetLevel(xx, posy, 'C');
+						levelScore+=2;
 					}
 				}
 				if(posy!=selectedPosy)
@@ -532,6 +653,7 @@ ChangeMoveMode()
 					for(yy=0;yy<maxSizeY;yy++)
 					{
 						SetLevel(posx, yy, 'C');
+						levelScore+=2;
 					}
 				}
 			}
@@ -558,6 +680,7 @@ ChangeMoveMode()
 		}
 	}
 }
+//}
 
 //{-------------------------- CheckTable --------------------------------
 CheckTable(int draw)
@@ -671,7 +794,7 @@ CheckTable(int draw)
 }
 //}
 
-//-------------------------- Wait --------------------------------
+//{-------------------------- Wait --------------------------------
 Wait(int fast)
 {
     int wait;
@@ -679,8 +802,9 @@ Wait(int fast)
     //if (fast) wait = speed / 2;
     Sleep(wait);
 }
+//}
 
-//-------------------------- Crush --------------------------------
+//{-------------------------- Crush --------------------------------
 Crush (int cx1, int cy1, int cx2, int cy2, int cx3, int cy3, int cx4, int cy4, int cx5, int cy5, int draw)
 {
     SetLevel(cx1, cy1, 'C');
@@ -728,8 +852,9 @@ Crush (int cx1, int cy1, int cx2, int cy2, int cx3, int cy3, int cx4, int cy4, i
 
     CheckTable(draw);
 }
+//}
 
-//-------------------------- Fall --------------------------------
+//{-------------------------- Fall --------------------------------
 Fall(int draw)
 {
     int fall;
@@ -765,8 +890,9 @@ Fall(int draw)
         if (draw) DrawTable(1, 1);
     }
 }
+//}
 
-//-------------------------- RandomColor --------------------------------
+//{-------------------------- RandomColor --------------------------------
 RandomColor()
 {
     int rng;
@@ -800,7 +926,9 @@ RandomColor()
 
     return color;
 }
+//}
 
+//{-------------------------- KeyDown --------------------------------
 KeyDown(char KeyCode)
 {
     int oldposx;
@@ -843,6 +971,7 @@ KeyDown(char KeyCode)
 
     DrawTable(0, 0);
 }
+//}
 
 //{	A grafikus munkaasztalból importált adatok.
 #asm   /* A grafikus munkaasztalból importált adatok. NE VÁLTOZTASD MEG! */
@@ -861,8 +990,10 @@ KeyDown(char KeyCode)
 					SPR_IND_SPACE2, //1697
 					SPR_IND_KERET, //1737
 					SPR_IND_KERET2, //1821
-					SPR_IND_FELHO, //1905
-					SPR_IND_KEZDO //3190
+					SPR_IND_KERET3, //1905
+					SPR_IND_MINISTAR, //1989
+					SPR_IND_FELHO, //203
+					SPR_IND_KEZDO //3288
 
 		;}
 
@@ -870,9 +1001,9 @@ KeyDown(char KeyCode)
 	GfxBaseAddr		dw	SpriteCount-GfxBaseAddr,0,0
 
 	;{   Sprite-ok adatai (Automatikusan beemelve!)
-	SpriteCount		db 17
+	SpriteCount		db 18
 	SpriteIndexArray
-				dw	0,139,322,473,639,795,925,1115,1204,1366,1487,1697,1737,1821,1905,1989,3274
+				dw	0,139,322,473,639,795,925,1115,1204,1366,1487,1697,1737,1821,1905,1989,2003, 3288
 
 	SpriteDataBuffer	ds	0,0
 	DecompressBuffer	ds	0,0
@@ -1007,6 +1138,11 @@ KeyDown(char KeyCode)
 				db	193,193,193,193,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17
 				db	176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17
 				db	17,176,17,17,176,17,193,193,193,193
+
+				db	1+128			; A sprite szélessége byte-okban
+				db	4			; A sprite magassága
+				db	0,3,252,0,0,0,0,0			; A sprite szín adatai
+				db	17,33,33,17
 
         Felho
 				db	64+128			; A sprite szélessége byte-okban
