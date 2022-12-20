@@ -44,12 +44,13 @@ struct GameLevel
 struct GameLevel levels[37];
 
 
-#define      SN     38
+#define      SN     36
 #define      speed   1
 
 
 struct GOBJ gameObjects[SN];
-struct GOBJ *goIndex[SN];
+//struct GOBJ *goIndex[SN];
+struct GOBJ *gIndex;
 
 char actualLevel[SN];
 char lastDrawnlevel[SN];
@@ -82,16 +83,19 @@ int currentIndex;
 
 struct GOBJ *ptr;
 
+int plx=0;
+int ply=0;
+
 //}
 
 //{-------------------------- MAIN --------------------------------
 main()
 {
+	DbInitFont(KKF);
 	DbInitGameLib(2, gameObjects, SN);
 	DbPageFullRamVid();
 	DbAssignRenderToVideo();
 	DbRandomize();
-	DbInitFont(KKF);
 	DbSetFontParam(FNT_COLOR, COLOR_WHITE); 
 	DbSetFontParam(FNT_BACKCOLOR, COLOR_DARKBLUE);  
 
@@ -119,7 +123,7 @@ CreateLevels()
 
 	for(i=1;i<37;i++)
 	{	
-		levels[i].score = 0; levels[i].star1Score = 20; levels[i].star2Score = 50; levels[i].star3Score = 100; levels[i].maxLap = 20; levels[i].condyNumber = 6; levels[i].extras = 1;
+		levels[i].score = 10; levels[i].star1Score = 20; levels[i].star2Score = 50; levels[i].star3Score = 100; levels[i].maxLap = 20; levels[i].condyNumber = 6; levels[i].extras = 1;
 	}
 	
 	i=1; levels[i].star1Score = 1;	levels[i].star2Score = 10;	levels[i].star3Score = 30;	levels[i].xSize = 3;	levels[i].ySize = 3;	levels[i].maxLap = 10;	levels[i].condyNumber = 4;	levels[i].extras = 0;
@@ -189,8 +193,8 @@ LevelSelector()
 {
 	int lx;
 	int ly;
-	int plx;
-	int ply;
+	//int plx;
+	//int ply;
 	int olx;
 	int oly;
 	char key;
@@ -203,8 +207,8 @@ LevelSelector()
 	startX=0;
 	startY=0;
 
-	plx = 0;
-	ply = 0;
+	//plx = 0;
+	//ply = 0;
 
 	ClearScreen();
 
@@ -253,6 +257,7 @@ LevelSelector()
 	while(key!='Q')
 	{
 		if (IsKeyDown(KEY_Q) || IsKeyDown(KEY_X)) key = 'Q';	
+		if (IsKeyDown(KEY_I)) key = 'I';	
 		if (IsKeyDown(JOY1_UP) || IsKeyDown(KEY_W)) key = 'W';	
 		if (IsKeyDown(JOY1_LEFT) || IsKeyDown(KEY_A)) key = 'A';	
 		if (IsKeyDown(JOY1_DOWN) || IsKeyDown(KEY_S)) key = 'S';	
@@ -276,6 +281,14 @@ LevelSelector()
 				    break;
 				case 'D':
 				    plx++;
+				    break;
+				case 'I':
+					index = ply*6+plx+1;
+					if(index<2 || levels[index-1].score>=levels[index-1].star1Score)
+					{
+					    LevelInfo(index);
+					    return;
+					}
 				    break;
 				case ' ':
 					index = ply*6+plx+1;
@@ -303,6 +316,46 @@ LevelSelector()
 	
 }
 //}
+
+//{-------------------------- LevelInfo --------------------------------
+LevelInfo(int index)
+{
+	int i;
+	ClearScreen();
+	DrawCoolString(10,30, "USABLE CONDENSERS:", 1);
+	
+	for(i=0;i<levels[index].condyNumber;i++)
+	{
+		DrawSprite2(8+i*7,44,i,59);
+	}
+
+	if(levels[i].extras)
+	{
+		DrawSprite2(8,75,6,59);
+		DrawSprite2(18,75,7,59);
+	}
+
+	DrawCoolString(10,110,"SIZE:  X", 1);
+	DrawCoolString(21,110,itos(levels[index].xSize), 1);
+	DrawCoolString(27,110,itos(levels[index].ySize), 1);
+
+	DrawCoolString(10,130, "MAX LAP:" ,1); 
+	DrawCoolString(27,130,itos(levels[index].maxLap), 1);
+
+	DrawCoolString(10,150, "1 STAR:",1); 
+	DrawCoolString(10,160, "2 STAR:",1); 
+	DrawCoolString(10,170, "3 STAR:",1); 
+	DrawCoolString(25,150,itos(levels[index].star1Score), 1);
+	DrawCoolString(25,160,itos(levels[index].star2Score), 1);
+	DrawCoolString(25,170,itos(levels[index].star3Score), 1);
+
+	DrawCoolString(10,190, "MAX SCORE:" ,1); 
+	DrawCoolString(30,190,itos(levels[index].score), 1);
+	
+	WaitForKeyPress(KEY_SPACE);
+}
+//}
+
 
 //{-------------------------- DrawCoolString --------------------------------
 DrawCoolString(int x, int y, char* text, int textSpeed)
@@ -522,20 +575,20 @@ DrawSprite(int x, int y, int candy, int index)
 	xonscreen= x*8 + startX;
 	yonscreen= y*30 + startY;
 	
-	goIndex[index] = DbInitGameObject(ptr,xonscreen,yonscreen,candy,GOFLG_VISIBLE, DbSprite16c8,0,0);
+	gIndex = DbInitGameObject(ptr,xonscreen,yonscreen,candy,GOFLG_VISIBLE, DbSprite16c8,0,0);
 	
-	DbClipSprite(goIndex[index]);
-	DbDrawSprite(goIndex[index]);
+	DbClipSprite(gIndex);
+	DbDrawSprite(gIndex);
 }
 //}
 
 //{-------------------------- DrawSprite2 --------------------------------
 DrawSprite2(int x, int y, int candy, int index)
 {
-	goIndex[index] = DbInitGameObject(ptr,x,y,candy,GOFLG_VISIBLE, DbSprite16c8,0,0);
+	gIndex = DbInitGameObject(ptr,x,y,candy,GOFLG_VISIBLE, DbSprite16c8,0,0);
 	
-	DbClipSprite(goIndex[index]);
-	DbDrawSprite(goIndex[index]);
+	DbClipSprite(gIndex);
+	DbDrawSprite(gIndex);
 }
 //}
 
