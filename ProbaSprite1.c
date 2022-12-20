@@ -41,7 +41,10 @@ struct GameLevel
 	int extras;
 };
 
-#define      SN     80
+struct GameLevel levels[37];
+
+
+#define      SN     60
 #define      speed   1
 
 
@@ -79,15 +82,11 @@ int currentIndex;
 
 struct GOBJ *ptr;
 
-struct GameLevel levels[40];
-
-
 //}
 
 //{-------------------------- MAIN --------------------------------
 main()
 {
-int i;
 	DbInitGameLib(2, gameObjects, SN);
 	DbPageFullRamVid();
 	DbAssignRenderToVideo();
@@ -120,7 +119,7 @@ CreateLevels()
 
 	for(i=1;i<37;i++)
 	{	
-		levels[i].score = 0; levels[i].star1Score = 10; levels[i].star2Score = 50; levels[i].star3Score = 100; levels[i].xSize = 6; levels[i].ySize = 6; levels[i].maxLap = 20; levels[i].condyNumber = 6; levels[i].extras = 1;
+		levels[i].score = 1; levels[i].star1Score = 20; levels[i].star2Score = 50; levels[i].star3Score = 100; levels[i].maxLap = 20; levels[i].condyNumber = 6; levels[i].extras = 1;
 	}
 	
 	i=1; levels[i].star1Score = 1;	levels[i].star2Score = 10;	levels[i].star3Score = 30;	levels[i].xSize = 3;	levels[i].ySize = 3;	levels[i].maxLap = 10;	levels[i].condyNumber = 4;	levels[i].extras = 0;
@@ -128,41 +127,42 @@ CreateLevels()
 	i=3; levels[i].xSize = 5;	levels[i].ySize = 3;	levels[i].condyNumber = 5;	levels[i].extras = 0;
 	i=4; levels[i].xSize = 4;	levels[i].ySize = 6;	levels[i].condyNumber = 5;	levels[i].extras = 0;
 	i=5; levels[i].xSize = 5;	levels[i].ySize = 5;    levels[i].extras = 0;
-	i=6; levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 15;	
+	i=6; levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 15;  levels[i].star3Score = 200;	
 
 	i=7; levels[i].xSize = 4;	levels[i].ySize = 6;
 	i=8; levels[i].xSize = 6;	levels[i].ySize = 3;
 	i=9; levels[i].xSize = 5;	levels[i].ySize = 5;
 
-	i=10; levels[i].xSize = 3;	levels[i].ySize = 3;
-	i=11; levels[i].xSize = 2;	levels[i].ySize = 6;
-	i=12; levels[i].xSize = 6;	levels[i].ySize = 2;
-	i=13; levels[i].xSize = 5;	levels[i].ySize = 4; levels[i].condyNumber = 3; 
-	i=14; levels[i].xSize = 6;	levels[i].ySize = 6; levels[i].condyNumber = 3; levels[i].extras = 0;
+	i=10; levels[i].xSize = 3;	levels[i].ySize = 3; levels[i].condyNumber = 4;
+	i=11; levels[i].xSize = 2;	levels[i].ySize = 6; levels[i].condyNumber = 4;
+	i=12; levels[i].xSize = 6;	levels[i].ySize = 2; levels[i].condyNumber = 4;
+	i=13; levels[i].xSize = 5;	levels[i].ySize = 4; levels[i].condyNumber = 3; levels[i].star3Score = 500;
+	i=14; levels[i].xSize = 6;	levels[i].ySize = 6; levels[i].condyNumber = 4; levels[i].extras = 0; levels[i].star3Score = 1000;
 	i=15; levels[i].xSize = 4;	levels[i].ySize = 4; levels[i].maxLap = 10;
 	i=16; levels[i].xSize = 4;	levels[i].ySize = 6; levels[i].maxLap = 10; levels[i].extras = 0; 
 	i=17; levels[i].xSize = 2;	levels[i].ySize = 4;
 	i=18; levels[i].xSize = 3;	levels[i].ySize = 5;
 	i=19; levels[i].xSize = 4;	levels[i].ySize = 6;
 
-	i=20; levels[i].xSize = 6;	levels[i].ySize = 6;
-	i=21; levels[i].xSize = 6;	levels[i].ySize = 6;
-	i=22; levels[i].xSize = 6;	levels[i].ySize = 6;
-	i=23; levels[i].xSize = 6;	levels[i].ySize = 6;
-	i=24; levels[i].xSize = 6;	levels[i].ySize = 6;
-	i=25; levels[i].xSize = 6;	levels[i].ySize = 6;
-	i=26; levels[i].xSize = 6;	levels[i].ySize = 6;
-	i=27; levels[i].xSize = 6;	levels[i].ySize = 6;
-	i=28; levels[i].xSize = 6;	levels[i].ySize = 6;
-	i=29; levels[i].xSize = 6;	levels[i].ySize = 6;
+	i=20; levels[i].xSize = 1;	levels[i].ySize = 6; levels[i].condyNumber = 3; levels[i].star1Score = 3; levels[i].star2Score = 6; levels[i].star3Score = 10;
+	i=21; levels[i].xSize = 4;	levels[i].ySize = 4; levels[i].condyNumber = 5;
+	i=22; levels[i].xSize = 6;	levels[i].ySize = 6; levels[i].condyNumber = 3; levels[i].star3Score = 1000;
+	i=23; levels[i].xSize = 3;	levels[i].ySize = 3; levels[i].condyNumber = 3;
+	i=24; levels[i].xSize = 3;	levels[i].ySize = 6; levels[i].condyNumber = 5;
+	i=25; levels[i].xSize = 5;	levels[i].ySize = 4; levels[i].condyNumber = 3;
+	i=26; levels[i].xSize = 5;	levels[i].ySize = 5; levels[i].condyNumber = 3; levels[i].maxLap = 10;  levels[i].star3Score = 1000;
+	i=27; levels[i].xSize = 4;	levels[i].ySize = 2; levels[i].condyNumber = 5;
+	i=28; levels[i].xSize = 4;	levels[i].ySize = 6; levels[i].star3Score = 200;
+	i=29; levels[i].xSize = 5;	levels[i].ySize = 5; levels[i].maxLap = 30; levels[i].star3Score = 400;
 
-	i=30; levels[i].xSize = 6;	levels[i].ySize = 6;
-	i=31; levels[i].xSize = 6;	levels[i].ySize = 6;
-	i=32; levels[i].xSize = 6;	levels[i].ySize = 6;
-	i=33; levels[i].xSize = 6;	levels[i].ySize = 6;
-	i=34; levels[i].xSize = 6;	levels[i].ySize = 6;
-	i=35; levels[i].xSize = 6;	levels[i].ySize = 6;
-	i=36; levels[i].xSize = 6;	levels[i].ySize = 6;
+	i=30; levels[i].xSize = 3;	levels[i].ySize = 4; levels[i].condyNumber = 2; levels[i].star2Score = 300; levels[i].star3Score = 1000;
+	i=31; levels[i].xSize = 5;	levels[i].ySize = 2; levels[i].condyNumber = 3; levels[i].star2Score = 300; levels[i].star3Score = 1000;
+	i=32; levels[i].xSize = 4;	levels[i].ySize = 6; levels[i].condyNumber = 4; levels[i].star3Score = 900;
+	i=33; levels[i].xSize = 6;	levels[i].ySize = 3;
+	i=34; levels[i].xSize = 4;	levels[i].ySize = 4;
+
+	i=35; levels[i].xSize = 5;	levels[i].ySize = 5; levels[i].condyNumber = 5; 
+	i=36; levels[i].xSize = 6;	levels[i].ySize = 6; levels[i].maxLap = 30; levels[i].star3Score = 300;	
 
 }
 //}
@@ -172,18 +172,15 @@ MainScreen()
 {
 	ClearScreen();
 	DrawSprite2(4,30,16,59);
-
 	DrawSprite2(8,85,0,59);
 	DrawSprite2(16,85,1,59);
 	DrawSprite2(24,85,2,59);
 	DrawSprite2(32,85,3,59);
 	DrawSprite2(40,85,4,59);
 	DrawSprite2(48,85,5,59);
-
 	DrawCoolString(5,190,"MADE BY: ANYSTONE", 7);
 	DrawCoolString(5,210,"POWERED BY: DEVTTOOLS", 5);
 	DrawCoolString(5,220,"FROM DOBERDO BBROTHERS", 5);
-
 	WaitForKeyPress(KEY_SPACE);
 }
 //}
@@ -204,6 +201,8 @@ LevelSelector()
 	int fullstars;
 
 	ptr = gameObjects;
+	startX=0;
+	startY=0;
 
 	plx = 0;
 	ply = 0;
@@ -249,7 +248,7 @@ LevelSelector()
 		}
 	}
 
-	DrawSprite3(plx+1, ply+1, 12, 58);
+	DrawSprite(plx+1, ply+1, 12, 58);
 
 	key = 'P';
 	while(key!='Q')
@@ -295,8 +294,8 @@ LevelSelector()
 			if (plx > 5) plx = 5;
 			if (ply > 5) ply = 5;
 
-			DrawSprite3(olx+1, oly+1, 14, 58);
-			DrawSprite3(plx+1, ply+1, 12, 58);
+			DrawSprite(olx+1, oly+1, 14, 58);
+			DrawSprite(plx+1, ply+1, 12, 58);
 			
 			Sleep(5);
 			key = 'P';
@@ -400,12 +399,12 @@ StartLevel(int index)
 		if (IsKeyDown(JOY1_DOWN) || IsKeyDown(KEY_S)) key = 'S';	
 		if (IsKeyDown(JOY1_RIGHT) || IsKeyDown(KEY_D)) key = 'D';	
 		if (IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_RET) || IsKeyDown(JOY1_FIRE)) key = ' ';	
-		if(key!='P')
+		if(key!='P' && key!='Q')
 		{
 			KeyDown(key);
-			Sleep(10);
 			key = 'P';
 		}
+		Sleep(5);
 	}
 
 	if(levelScore > levels[index].score) levels[index].score = levelScore;
@@ -524,12 +523,10 @@ DrawSprite(int x, int y, int candy, int index)
 	xonscreen= x*8 + startX;
 	yonscreen= y*30 + startY;
 	
-	goIndex[index] = DbInitGameObject(++ptr,xonscreen,yonscreen,candy,GOFLG_VISIBLE, DbSprite16c8,0,0);
+	goIndex[index] = DbInitGameObject(ptr,xonscreen,yonscreen,candy,GOFLG_VISIBLE, DbSprite16c8,0,0);
 	
 	DbClipSprite(goIndex[index]);
 	DbDrawSprite(goIndex[index]);
-
-	return goIndex[index];
 }
 //}
 
@@ -540,24 +537,6 @@ DrawSprite2(int x, int y, int candy, int index)
 	
 	DbClipSprite(goIndex[index]);
 	DbDrawSprite(goIndex[index]);
-}
-//}
-
-//{-------------------------- DrawSprite3 --------------------------------
-DrawSprite3(int x, int y, int candy, int index)
-{
-	int xonscreen;
-	int yonscreen;
-
-	xonscreen= x*8;
-	yonscreen= y*30;
-	
-	goIndex[index] = DbInitGameObject(ptr,xonscreen,yonscreen,candy,GOFLG_VISIBLE, DbSprite16c8,0,0);
-	
-	DbClipSprite(goIndex[index]);
-	DbDrawSprite(goIndex[index]);
-
-	return goIndex[index];
 }
 //}
 
@@ -592,10 +571,19 @@ ChangeMoveMode()
 				{
 					for(yy=0;yy<maxSizeY;yy++)
 					{
-						if(temp==Level(xx, yy)) SetLevel(xx, yy, 'C');
+						if(temp==Level(xx, yy))
+						{
+							SetLevel(xx, yy, 'C');
+							levelScore+=2;
+						}
 					}
 				}
 				SetLevel(posx,posy, 'C' );
+				levelScore+=2;
+			        
+				Sound(2000,3,15);
+			        Sound(1000,3,15);
+			        Sound(500,3,15);
 			}
 			else if (Level(selectedPosx,selectedPosy)=='D')
 			{
@@ -614,6 +602,10 @@ ChangeMoveMode()
 				
 				SetLevel(selectedPosx,selectedPosy, 'C');
 				levelScore+=2;
+				Sound(2000,3,15);
+			        Sound(1000,3,15);
+			        Sound(500,3,15);
+
 			}
 			else if (Level(posx,posy)=='X')
 			{	
@@ -634,6 +626,9 @@ ChangeMoveMode()
 					}
 				}
 
+				Sound(2000,3,15);
+			        Sound(1000,3,15);
+			        Sound(500,3,15);
 			}
 			else if (Level(selectedPosx,selectedPosy)=='X')
 			{
@@ -653,6 +648,9 @@ ChangeMoveMode()
 						levelScore+=2;
 					}
 				}
+				Sound(2000,3,15);
+			        Sound(1000,3,15);
+			        Sound(500,3,15);
 			}
 			else
 			{
@@ -797,13 +795,16 @@ Wait(int fast)
     int wait;
     wait = speed;
     //if (fast) wait = speed / 2;
-    Sleep(wait);
+    //Sleep(wait);
 }
 //}
 
 //{-------------------------- Crush --------------------------------
 Crush (int cx1, int cy1, int cx2, int cy2, int cx3, int cy3, int cx4, int cy4, int cx5, int cy5, int draw)
 {
+    Sound(2000,3,15);
+    Sound(1000,3,15);
+
     SetLevel(cx1, cy1, 'C');
     SetLevel(cx2, cy2, 'C');
     SetLevel(cx3, cy3, 'C');
@@ -857,8 +858,10 @@ Fall(int draw)
     int fall;
     int x;
     int y;
+    int pair;
 
     fall = 1;
+    pair = 0;
 
     while(fall)
     {
@@ -872,6 +875,17 @@ Fall(int draw)
                     SetLevel(x, y, Level(x, y - 1));
                     SetLevel(x, y - 1, ' ');
                     fall = 1;
+		    
+		    if(pair)
+                    {
+		    	Sound(3723,2,15);
+	 	        pair=0;
+		    }
+                    else
+		    {
+		    	Sound(3823,2,15);
+                        pair=1;
+	            }
                 }
             }
         }
