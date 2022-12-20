@@ -44,7 +44,7 @@ struct GameLevel
 struct GameLevel levels[37];
 
 
-#define      SN     36
+#define      SN     34
 #define      speed   1
 
 
@@ -52,8 +52,8 @@ struct GOBJ gameObjects[SN];
 //struct GOBJ *goIndex[SN];
 struct GOBJ *gIndex;
 
-char actualLevel[SN];
-char lastDrawnlevel[SN];
+char actualLevel[40];
+char lastDrawnlevel[40];
 
 int posx = 0;
 int posy = 0;
@@ -123,8 +123,10 @@ CreateLevels()
 
 	for(i=1;i<37;i++)
 	{	
-		levels[i].score = 10; levels[i].star1Score = 20; levels[i].star2Score = 50; levels[i].star3Score = 100; levels[i].maxLap = 20; levels[i].condyNumber = 6; levels[i].extras = 1;
+		levels[i].score = 100; levels[i].star1Score = 20; levels[i].star2Score = 50; levels[i].star3Score = 100; levels[i].maxLap = 20; levels[i].condyNumber = 6; levels[i].extras = 1;
 	}
+	
+//15,16,17,28,29,30	
 	
 	i=1; levels[i].star1Score = 1;	levels[i].star2Score = 10;	levels[i].star3Score = 30;	levels[i].xSize = 3;	levels[i].ySize = 3;	levels[i].maxLap = 10;	levels[i].condyNumber = 4;	levels[i].extras = 0;
 	i=2; levels[i].star1Score = 1;	levels[i].star2Score = 10;	levels[i].star3Score = 30;	levels[i].xSize = 4;	levels[i].ySize = 4;	levels[i].maxLap = 10;	levels[i].condyNumber = 4;	levels[i].extras = 0;
@@ -141,10 +143,10 @@ CreateLevels()
 	i=11; levels[i].xSize = 2;	levels[i].ySize = 6; levels[i].condyNumber = 4;
 	i=12; levels[i].xSize = 6;	levels[i].ySize = 2; levels[i].condyNumber = 4;
 	i=13; levels[i].xSize = 5;	levels[i].ySize = 4; levels[i].condyNumber = 3; levels[i].star3Score = 500;
-	i=14; levels[i].xSize = 6;	levels[i].ySize = 6; levels[i].condyNumber = 4; levels[i].extras = 0; levels[i].star3Score = 1000;
+	i=14; levels[i].xSize = 6;	levels[i].ySize = 6; levels[i].condyNumber = 4; levels[i].extras = 0; levels[i].star3Score = 800;
 	i=15; levels[i].xSize = 4;	levels[i].ySize = 4; levels[i].maxLap = 10;
 	i=16; levels[i].xSize = 4;	levels[i].ySize = 6; levels[i].maxLap = 10; levels[i].extras = 0; 
-	i=17; levels[i].xSize = 2;	levels[i].ySize = 4;
+	i=17; levels[i].xSize = 2;	levels[i].ySize = 4; levels[i].condyNumber = 4;
 	i=18; levels[i].xSize = 3;	levels[i].ySize = 5;
 	i=19; levels[i].xSize = 4;	levels[i].ySize = 6;
 
@@ -153,15 +155,15 @@ CreateLevels()
 	i=22; levels[i].xSize = 6;	levels[i].ySize = 6; levels[i].condyNumber = 3; levels[i].star3Score = 1000;
 	i=23; levels[i].xSize = 3;	levels[i].ySize = 3; levels[i].condyNumber = 3;
 	i=24; levels[i].xSize = 3;	levels[i].ySize = 6; levels[i].condyNumber = 5;
-	i=25; levels[i].xSize = 5;	levels[i].ySize = 4; levels[i].condyNumber = 3;
-	i=26; levels[i].xSize = 5;	levels[i].ySize = 5; levels[i].condyNumber = 3; levels[i].maxLap = 10;  levels[i].star3Score = 1000;
-	i=27; levels[i].xSize = 4;	levels[i].ySize = 2; levels[i].condyNumber = 5;
+	i=25; levels[i].xSize = 5;	levels[i].ySize = 4; levels[i].condyNumber = 3; levels[i].star3Score = 1000;
+	i=26; levels[i].xSize = 5;	levels[i].ySize = 5; levels[i].condyNumber = 3; levels[i].maxLap = 10;  levels[i].star3Score = 700;
+	i=27; levels[i].xSize = 4;	levels[i].ySize = 2; levels[i].condyNumber = 5; levels[i].star3Score = 50;
 	i=28; levels[i].xSize = 4;	levels[i].ySize = 6; levels[i].star3Score = 200;
 	i=29; levels[i].xSize = 5;	levels[i].ySize = 5; levels[i].maxLap = 30; levels[i].star3Score = 400;
 
 	i=30; levels[i].xSize = 3;	levels[i].ySize = 4; levels[i].condyNumber = 2; levels[i].star2Score = 300; levels[i].star3Score = 1000;
-	i=31; levels[i].xSize = 5;	levels[i].ySize = 2; levels[i].condyNumber = 3; levels[i].star2Score = 300; levels[i].star3Score = 1000;
-	i=32; levels[i].xSize = 4;	levels[i].ySize = 6; levels[i].condyNumber = 4; levels[i].star3Score = 900;
+	i=31; levels[i].xSize = 5;	levels[i].ySize = 2; levels[i].condyNumber = 3; levels[i].star2Score = 70; levels[i].star3Score = 150;
+	i=32; levels[i].xSize = 4;	levels[i].ySize = 6; levels[i].condyNumber = 4; levels[i].star3Score = 200;
 	i=33; levels[i].xSize = 6;	levels[i].ySize = 3;
 	i=34; levels[i].xSize = 4;	levels[i].ySize = 4;
 	i=35; levels[i].xSize = 5;	levels[i].ySize = 5; levels[i].condyNumber = 5; 
