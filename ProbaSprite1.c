@@ -44,7 +44,7 @@ struct GameLevel
 struct GameLevel levels[37];
 
 
-#define      SN     60
+#define      SN     38
 #define      speed   1
 
 
@@ -119,7 +119,7 @@ CreateLevels()
 
 	for(i=1;i<37;i++)
 	{	
-		levels[i].score = 1; levels[i].star1Score = 20; levels[i].star2Score = 50; levels[i].star3Score = 100; levels[i].maxLap = 20; levels[i].condyNumber = 6; levels[i].extras = 1;
+		levels[i].score = 0; levels[i].star1Score = 20; levels[i].star2Score = 50; levels[i].star3Score = 100; levels[i].maxLap = 20; levels[i].condyNumber = 6; levels[i].extras = 1;
 	}
 	
 	i=1; levels[i].star1Score = 1;	levels[i].star2Score = 10;	levels[i].star3Score = 30;	levels[i].xSize = 3;	levels[i].ySize = 3;	levels[i].maxLap = 10;	levels[i].condyNumber = 4;	levels[i].extras = 0;
@@ -160,7 +160,6 @@ CreateLevels()
 	i=32; levels[i].xSize = 4;	levels[i].ySize = 6; levels[i].condyNumber = 4; levels[i].star3Score = 900;
 	i=33; levels[i].xSize = 6;	levels[i].ySize = 3;
 	i=34; levels[i].xSize = 4;	levels[i].ySize = 4;
-
 	i=35; levels[i].xSize = 5;	levels[i].ySize = 5; levels[i].condyNumber = 5; 
 	i=36; levels[i].xSize = 6;	levels[i].ySize = 6; levels[i].maxLap = 30; levels[i].star3Score = 300;	
 
@@ -230,7 +229,7 @@ LevelSelector()
 		for(ly=0;ly<6;ly++)
 		{
 			index = ly*6+lx+1;
-			if(index<2 || levels[index-1].score>0)
+			if(index<2 || levels[index-1].score>=levels[index-1].star1Score)
 			{
 				DbSetFontParam(FNT_COLOR, COLOR_WHITE);
 			}
@@ -280,7 +279,7 @@ LevelSelector()
 				    break;
 				case ' ':
 					index = ply*6+plx+1;
-					if(index<2 || levels[index-1].score>0)
+					if(index<2 || levels[index-1].score>=levels[index-1].star1Score)
 					{
 						currentIndex = index;
 						StartLevel(index);
