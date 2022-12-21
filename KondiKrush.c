@@ -1,4 +1,5 @@
 //{ -------------------------- INIT --------------------------------
+//https://youtu.be/EzG_4HVOxnQ
 struct RECT
 {
 	unsigned char X,Y,Width,Height;	
@@ -44,12 +45,11 @@ struct GameLevel
 struct GameLevel levels[37];
 
 
-#define      SN     34
+#define      SN     33
 #define      speed   1
 
 
 struct GOBJ gameObjects[SN];
-//struct GOBJ *goIndex[SN];
 struct GOBJ *gIndex;
 
 char actualLevel[40];
@@ -123,10 +123,10 @@ CreateLevels()
 
 	for(i=1;i<37;i++)
 	{	
-		levels[i].score = 100; levels[i].star1Score = 20; levels[i].star2Score = 50; levels[i].star3Score = 100; levels[i].maxLap = 20; levels[i].condyNumber = 6; levels[i].extras = 1;
+		levels[i].score = 0; levels[i].star1Score = 20; levels[i].star2Score = 50; levels[i].star3Score = 100; levels[i].maxLap = 20; levels[i].condyNumber = 6; levels[i].extras = 1;
 	}
 	
-//15,16,17,28,29,30	
+//15,16,17,29
 	
 	i=1; levels[i].star1Score = 1;	levels[i].star2Score = 10;	levels[i].star3Score = 30;	levels[i].xSize = 3;	levels[i].ySize = 3;	levels[i].maxLap = 10;	levels[i].condyNumber = 4;	levels[i].extras = 0;
 	i=2; levels[i].star1Score = 1;	levels[i].star2Score = 10;	levels[i].star3Score = 30;	levels[i].xSize = 4;	levels[i].ySize = 4;	levels[i].maxLap = 10;	levels[i].condyNumber = 4;	levels[i].extras = 0;
@@ -195,8 +195,6 @@ LevelSelector()
 {
 	int lx;
 	int ly;
-	//int plx;
-	//int ply;
 	int olx;
 	int oly;
 	char key;
@@ -208,9 +206,6 @@ LevelSelector()
 	ptr = gameObjects;
 	startX=0;
 	startY=0;
-
-	//plx = 0;
-	//ply = 0;
 
 	ClearScreen();
 
@@ -331,7 +326,7 @@ LevelInfo(int index)
 		DrawSprite2(8+i*7,44,i,59);
 	}
 
-	if(levels[i].extras)
+	if(levels[index].extras)
 	{
 		DrawSprite2(8,75,6,59);
 		DrawSprite2(18,75,7,59);
