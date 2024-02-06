@@ -253,7 +253,7 @@ MainScreen()
 	DrawSprite2(32,85,3,59);
 	DrawSprite2(40,85,4,59);
 	DrawSprite2(48,85,5,59);
-	DrawCoolString(5, 230, "C - CREDITS    SPACE - START", 5);
+	DrawCoolString(4, 230, "C - CREDITS    SPACE - START", 5);
 
 	ptr = gameObjects;
  
@@ -342,6 +342,8 @@ LevelSelector()
 	DrawCoolString(20,0, itos(fullscore),2);
 	DrawCoolString(36,0, "FULLSTARS:",4);
 	DrawCoolString(56,0, itos(fullstars),2);
+	
+	DrawCoolString(0,230, "I-INFO                   M-MUSIC",1);
 
 	for(lx=0;lx<6;lx++)
 	{
@@ -550,6 +552,8 @@ StartLevel(int index)
 	DrawCoolString(12,0, itos(levelScore),2);
 	DrawCoolString(25,0, "LAP:",4);
 	DrawCoolString(33,0, itos(lap),2);
+
+	DrawCoolString(0,230, "                          Q-QUIT",1);
 
 	maxSizeX = lx;
 	maxSizeY = ly;
