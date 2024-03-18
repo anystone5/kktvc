@@ -1,3 +1,51 @@
+//címkép alsó fele
+//creditsen billenytűkódo
+
+
+#options
+#define DB_TILT_EXTRA_WIDTH
+#define DB_TILT_MIRROR
+#endoptions
+
+//{	Exportált sprite indexek
+#pragma rem START_GFX_DEFINES		// NE VÁLTOZTASD!
+
+#define SPR_IND_BLUE	0
+#define SPR_IND_YELLOW	1
+#define SPR_IND_RED	2
+#define SPR_IND_BRAWN	3
+#define SPR_IND_PURPLE	4
+#define SPR_IND_GREEN	5
+#define SPR_IND_DISCO	6
+#define SPR_IND_CSIK	7
+#define SPR_IND_STAR	8
+#define SPR_IND_STAR2	9
+#define SPR_IND_BOMB	10
+#define SPR_IND_1	11
+#define SPR_IND_2	12
+#define SPR_IND_3	13
+#define SPR_IND_4	14
+#define SPR_IND_5	15
+#define SPR_IND_6	16
+#define SPR_IND_DISCO2	17
+#define SPR_IND_CSIK2	18
+#define SPR_IND_STAR22	19
+#define SPR_IND_STAR23	20
+#define SPR_IND_BOMB2	21
+#define SPR_IND_PROBASPRITE	22
+#define SPR_IND_KERET	23
+#define SPR_IND_KERET2	24
+#define SPR_IND_KERET3	25
+#define SPR_IND_MINISTAR	26
+#define SPR_IND_KEZDO3	27
+
+#pragma rem END_GFX_DEFINES
+
+//}
+
+#define ROBOT_BACK_SIZE 66
+char *backPtr;
+
 //{ -------------------------- INIT --------------------------------
 //https://youtu.be/EzG_4HVOxnQ
 struct RECT
@@ -29,6 +77,18 @@ struct GOBJ
 	unsigned char SprClipFlag;	// A sprite vágási állapotát tárolja le a sprite kirakónak
 };
 
+   struct SCNSPRITE
+   {
+ 	        unsigned char SprInd;		// A sprite indexe (*)
+ 	        int X,Y;			// A sprite 16 bites előjeles koordinátája. (*)
+ 	        unsigned char SprWidth;		// A sprite szélessége. (*)
+ 	        unsigned char SprHeight;	// A sprite magassága. (*)
+ 	        unsigned char Tag;		// A scene editorban a sprite-hoz rendelt Tag (*)
+ 	        unsigned char Flag;		// A kirakott sprite Flag értéke. A 7. bit mondja meg, hogy a kirakandó sprite-ot kell-e tükrözni. (*)
+ 	        unsigned char *SprPalette;	// A sprite palettájának címe. Alapból 0, de a működés során tetszőlegesen megváltoztatható. Feltéve, ha a kirajzoló használja a sprite palettát.
+ 	        char Visible;			// Ezzel a tulajdonsággal kikapcsolhatjuk a sprite kirajzolását. Ha ezt a változót 0-ra állítjuk (false) akkor az adott sprite nem fog kirajzolódni
+   };
+
 struct GameLevel
 {
 	int score;
@@ -42,18 +102,64 @@ struct GameLevel
 	int extras;
 };
 
-struct GameLevel levels[37];
-
-
-#define      SN     33
+#define      SN     30
 #define      speed   1
+
+struct GameLevel levels[37] = 	{
+					{0,0,0,0,0,0,0,0,0},
+
+					{0,1,10,30,3,3,10,4,0},
+					{0,1,10,30,4,4,10,4,0},
+					{0,20,50,100,5,3,20,5,0},
+					{0,20,50,100,4,6,20,5,0},
+					{0,20,50,100,5,5,20,6,0},
+					{0,20,50,200,6,6,15,6,1},
+
+					{0,20,50,100,4,6,20,6,1},
+					{0,20,50,100,6,3,20,6,1},
+					{0,20,50,100,5,5,20,6,1},
+					{0,20,50,100,3,3,20,4,1},
+					{0,20,50,100,2,6,20,4,1},
+					{0,20,50,100,6,2,20,4,1},
+
+					{0,20,50,500,5,4,20,3,1},
+					{0,20,50,800,6,6,20,4,0},
+					{0,20,50,100,4,4,10,6,1},
+					{0,20,50,100,4,6,10,6,0},
+					{0,20,50,100,2,4,20,4,1},
+					{0,20,50,100,3,5,20,6,1},
+
+					{0,20,50,100,4,6,20,6,1},
+					{0,3,6,10,1,6,20,3,1},
+					{0,20,50,100,4,4,20,5,1},
+					{0,20,50,1000,6,6,20,3,1},
+					{0,20,50,100,3,3,20,3,1},
+					{0,20,50,100,3,6,20,5,1},
+
+					{0,20,50,1000,5,4,20,3,1},
+					{0,20,50,700,5,5,10,3,1},
+					{0,20,50,50,4,2,20,5,1},
+					{0,20,50,200,4,6,20,6,1},
+					{0,20,50,400,5,5,30,6,1},
+					{0,20,300,1000,3,4,20,2,1},
+
+					{0,20,70,150,5,2,20,3,1},
+					{0,20,50,200,4,6,20,4,1},
+					{0,20,50,100,6,3,20,6,1},
+					{0,20,50,100,4,4,20,6,1},
+					{1000,20,50,100,5,5,20,5,1},
+					{1000,20,50,300,6,6,30,6,1}
+				};
 
 
 struct GOBJ gameObjects[SN];
 struct GOBJ *gIndex;
+struct GOBJ *gIndex2[SN];
+
 
 char actualLevel[40];
 char lastDrawnlevel[40];
+
 
 int posx = 0;
 int posy = 0;
@@ -68,6 +174,9 @@ int maxSizeY;
 
 int startX;
 int startY;
+
+int gamemode=0;
+int gotomain=1;
 
 int lap;
 int level;
@@ -86,11 +195,25 @@ struct GOBJ *ptr;
 int plx=0;
 int ply=0;
 
+#define EFFECT_CH_COUNT 3
+
+char effectBuffer[12];
+
+#pragma mblock 0x200
+char snowBack[620];
+#pragma endmb
+
+int music;
+
 //}
 
 //{-------------------------- MAIN --------------------------------
 main()
 {
+	int i;
+
+	music=1;	
+	SetBorder(COLOR_DARKBLUE);
 	DbInitFont(KKF);
 	DbInitGameLib(2, gameObjects, SN);
 	DbPageFullRamVid();
@@ -99,15 +222,27 @@ main()
 	DbSetFontParam(FNT_COLOR, COLOR_WHITE); 
 	DbSetFontParam(FNT_BACKCOLOR, COLOR_DARKBLUE);  
 
+	DbInitSoundSystem();
+      	DbInitEffectChannels(effectBuffer,EFFECT_CH_COUNT);
+	DbStopMusic();
+	InitInterrupt(DefUserIT);
+	DbSetTvcMusicParams(3, 1);
+
+	DbStartMusic(TitleMusic,MUSIC_TVC,6 + MUSIC_LOOPED);
+
+
 	ptr = gameObjects;
 
-	MainScreen();
-	CreateLevels();
-	while(1) LevelSelector();
+	while (1)  
+	{
+		if (gotomain==1) MainScreen();
+		LevelSelector();
+	};
 
 	DbCloseGameLib();
 }
 //}
+
 
 //{-------------------------- ClearScreen --------------------------------
 ClearScreen()
@@ -116,79 +251,84 @@ ClearScreen()
 }
 //}
 
-//{-------------------------- CreateLevels --------------------------------
-CreateLevels()
-{
-	int i;
-
-	for(i=1;i<37;i++)
-	{	
-		levels[i].score = 0; levels[i].star1Score = 20; levels[i].star2Score = 50; levels[i].star3Score = 100; levels[i].maxLap = 20; levels[i].condyNumber = 6; levels[i].extras = 1;
-	}
-	
-//15,16,17,29
-	
-	i=1; levels[i].star1Score = 1;	levels[i].star2Score = 10;	levels[i].star3Score = 30;	levels[i].xSize = 3;	levels[i].ySize = 3;	levels[i].maxLap = 10;	levels[i].condyNumber = 4;	levels[i].extras = 0;
-	i=2; levels[i].star1Score = 1;	levels[i].star2Score = 10;	levels[i].star3Score = 30;	levels[i].xSize = 4;	levels[i].ySize = 4;	levels[i].maxLap = 10;	levels[i].condyNumber = 4;	levels[i].extras = 0;
-	i=3; levels[i].xSize = 5;	levels[i].ySize = 3;	levels[i].condyNumber = 5;	levels[i].extras = 0;
-	i=4; levels[i].xSize = 4;	levels[i].ySize = 6;	levels[i].condyNumber = 5;	levels[i].extras = 0;
-	i=5; levels[i].xSize = 5;	levels[i].ySize = 5;    levels[i].extras = 0;
-	i=6; levels[i].xSize = 6;	levels[i].ySize = 6;	levels[i].maxLap = 15;  levels[i].star3Score = 200;	
-
-	i=7; levels[i].xSize = 4;	levels[i].ySize = 6;
-	i=8; levels[i].xSize = 6;	levels[i].ySize = 3;
-	i=9; levels[i].xSize = 5;	levels[i].ySize = 5;
-
-	i=10; levels[i].xSize = 3;	levels[i].ySize = 3; levels[i].condyNumber = 4;
-	i=11; levels[i].xSize = 2;	levels[i].ySize = 6; levels[i].condyNumber = 4;
-	i=12; levels[i].xSize = 6;	levels[i].ySize = 2; levels[i].condyNumber = 4;
-	i=13; levels[i].xSize = 5;	levels[i].ySize = 4; levels[i].condyNumber = 3; levels[i].star3Score = 500;
-	i=14; levels[i].xSize = 6;	levels[i].ySize = 6; levels[i].condyNumber = 4; levels[i].extras = 0; levels[i].star3Score = 800;
-	i=15; levels[i].xSize = 4;	levels[i].ySize = 4; levels[i].maxLap = 10;
-	i=16; levels[i].xSize = 4;	levels[i].ySize = 6; levels[i].maxLap = 10; levels[i].extras = 0; 
-	i=17; levels[i].xSize = 2;	levels[i].ySize = 4; levels[i].condyNumber = 4;
-	i=18; levels[i].xSize = 3;	levels[i].ySize = 5;
-	i=19; levels[i].xSize = 4;	levels[i].ySize = 6;
-
-	i=20; levels[i].xSize = 1;	levels[i].ySize = 6; levels[i].condyNumber = 3; levels[i].star1Score = 3; levels[i].star2Score = 6; levels[i].star3Score = 10;
-	i=21; levels[i].xSize = 4;	levels[i].ySize = 4; levels[i].condyNumber = 5;
-	i=22; levels[i].xSize = 6;	levels[i].ySize = 6; levels[i].condyNumber = 3; levels[i].star3Score = 1000;
-	i=23; levels[i].xSize = 3;	levels[i].ySize = 3; levels[i].condyNumber = 3;
-	i=24; levels[i].xSize = 3;	levels[i].ySize = 6; levels[i].condyNumber = 5;
-	i=25; levels[i].xSize = 5;	levels[i].ySize = 4; levels[i].condyNumber = 3; levels[i].star3Score = 1000;
-	i=26; levels[i].xSize = 5;	levels[i].ySize = 5; levels[i].condyNumber = 3; levels[i].maxLap = 10;  levels[i].star3Score = 700;
-	i=27; levels[i].xSize = 4;	levels[i].ySize = 2; levels[i].condyNumber = 5; levels[i].star3Score = 50;
-	i=28; levels[i].xSize = 4;	levels[i].ySize = 6; levels[i].star3Score = 200;
-	i=29; levels[i].xSize = 5;	levels[i].ySize = 5; levels[i].maxLap = 30; levels[i].star3Score = 400;
-
-	i=30; levels[i].xSize = 3;	levels[i].ySize = 4; levels[i].condyNumber = 2; levels[i].star2Score = 300; levels[i].star3Score = 1000;
-	i=31; levels[i].xSize = 5;	levels[i].ySize = 2; levels[i].condyNumber = 3; levels[i].star2Score = 70; levels[i].star3Score = 150;
-	i=32; levels[i].xSize = 4;	levels[i].ySize = 6; levels[i].condyNumber = 4; levels[i].star3Score = 200;
-	i=33; levels[i].xSize = 6;	levels[i].ySize = 3;
-	i=34; levels[i].xSize = 4;	levels[i].ySize = 4;
-	i=35; levels[i].xSize = 5;	levels[i].ySize = 5; levels[i].condyNumber = 5; 
-	i=36; levels[i].xSize = 6;	levels[i].ySize = 6; levels[i].maxLap = 30; levels[i].star3Score = 300;	
-
-}
-//}
-
 //{-------------------------- MainScreen --------------------------------
 MainScreen()
 {
+	int c;
+	int i;
+	int y;
+	int x;
+	c=0;
+
 	ClearScreen();
-	DrawSprite2(4,30,16,59);
-	DrawSprite2(8,85,0,59);
-	DrawSprite2(16,85,1,59);
-	DrawSprite2(24,85,2,59);
-	DrawSprite2(32,85,3,59);
-	DrawSprite2(40,85,4,59);
-	DrawSprite2(48,85,5,59);
-	DrawCoolString(5,190,"MADE BY: ANYSTONE", 7);
-	DrawCoolString(5,210,"POWERED BY: DEVTTOOLS", 5);
-	DrawCoolString(5,220,"FROM DOBERDO BBROTHERS", 5);
-	WaitForKeyPress(KEY_SPACE);
+
+	DbAssignRenderToBuffer();
+
+	ClearScreen();
+	DrawSprite2(9,42,SPR_IND_KEZDO3,59);
+	DrawSprite2(8,85,SPR_IND_BLUE+gamemode*11,59);
+	DrawSprite2(16,85,SPR_IND_YELLOW+gamemode*11,59);
+	DrawSprite2(24,85,SPR_IND_RED+gamemode*11,59);
+	DrawSprite2(32,85,SPR_IND_BRAWN+gamemode*11,59);
+	DrawSprite2(40,85,SPR_IND_PURPLE+gamemode*11,59);
+	DrawSprite2(48,85,SPR_IND_GREEN+gamemode*11,59);
+	DrawCoolString(4, 230, "C - CREDITS    SPACE - START", 5);
+
+	ptr = gameObjects;
+ 
+	DbCopyToFullScreen();
+	/*
+	backPtr = snowBack;
+	for(i=0;i<10;i++)
+	{
+		DrawSprite3(Random(60),Random(40), 17,i);
+	}
+	*/
+	while(1)
+	{
+		for(i=0;i<10;i++)
+		{
+			if(IsKeyDown(KEY_C)) {c=1; break;}
+			if(IsKeyDown(KEY_SPACE)) {break;}
+			/*
+			y = gIndex2[i]->Y+Random(20)+5;
+			x = gIndex2[i]->X+Random(6)-3;
+			if(x<0) x = 0;
+			if (x>60) x=60;
+			gIndex2[i]->X=x;
+			if(y>230) y=0;
+			gIndex2[i]->Y=y;
+			*/
+		}
+		if(IsKeyDown(KEY_C)) {c=1; break;}
+		if(IsKeyDown(KEY_SPACE)) {break;}
+		DbRender();
+		if(IsKeyDown(KEY_C)) {c=1; break;}
+		if(IsKeyDown(KEY_SPACE)) {break;}
+	}
+
+	DbSetRenderToVideo();
+	if(c) Credits();
+
+	ptr = gameObjects;
+
 }
 //}
+
+Credits()
+{
+	ClearScreen();
+
+	DrawCoolString(22,0, "KONDI KRUSH!", 1);
+	DrawCoolString(0,40, "MADE BY ANYSTONE", 1);
+	DrawCoolString(0,80, "DEVTOOL HELPS: DOBERDO BROTHERS", 1);
+	DrawCoolString(0,100, "MUSIC: REI AND ANYSTONE", 1);
+	DrawCoolString(0,120, "GFX: NORBICSEK", 1);
+	DrawCoolString(23, 230, "- SPACE -", 5);
+
+	WaitForKeyPress(KEY_SPACE);
+	MainScreen();
+}
 
 //{-------------------------- LevelSelector --------------------------------
 LevelSelector()
@@ -224,6 +364,8 @@ LevelSelector()
 	DrawCoolString(20,0, itos(fullscore),2);
 	DrawCoolString(36,0, "FULLSTARS:",4);
 	DrawCoolString(56,0, itos(fullstars),2);
+	
+	DrawCoolString(0,230, "I-INFO                   M-MUSIC",1);
 
 	for(lx=0;lx<6;lx++)
 	{
@@ -241,14 +383,14 @@ LevelSelector()
 
 			DbDrawStrEx(11+lx*8,40+ly*30,itos(index));
 
-			if(levels[index].score >= levels[index].star1Score) DrawSprite2(10+lx*8,50+ly*30,15,59);
-			if(levels[index].score >= levels[index].star2Score) DrawSprite2(12+lx*8,50+ly*30,15,59);
-			if(levels[index].score >= levels[index].star3Score) DrawSprite2(14+lx*8,50+ly*30,15,59);
+			if(levels[index].score >= levels[index].star1Score) DrawSprite2(10+lx*8,50+ly*30,SPR_IND_MINISTAR,59);
+			if(levels[index].score >= levels[index].star2Score) DrawSprite2(12+lx*8,50+ly*30,SPR_IND_MINISTAR,59);
+			if(levels[index].score >= levels[index].star3Score) DrawSprite2(14+lx*8,50+ly*30,SPR_IND_MINISTAR,59);
 
 		}
 	}
 
-	DrawSprite(plx+1, ply+1, 12, 58);
+	DrawSprite(plx+1, ply+1, SPR_IND_KERET, 58);
 
 	key = 'P';
 	while(key!='Q')
@@ -259,6 +401,7 @@ LevelSelector()
 		if (IsKeyDown(JOY1_LEFT) || IsKeyDown(KEY_A)) key = 'A';	
 		if (IsKeyDown(JOY1_DOWN) || IsKeyDown(KEY_S)) key = 'S';	
 		if (IsKeyDown(JOY1_RIGHT) || IsKeyDown(KEY_D)) key = 'D';	
+		if (IsKeyDown(KEY_M)) key = 'M';	
 		if (IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_RET) || IsKeyDown(JOY1_FIRE)) key = ' ';	
 		if(key!='P')
 		{
@@ -266,7 +409,20 @@ LevelSelector()
 			oly = ply;
 
 			switch (key)
-			{
+			{				
+				case 'M':
+				   	if(music==1)	
+				    	{
+						music = 0;
+						DbStopMusic();
+					}
+					else
+					{
+						music = 1;
+						DbStartMusic(TitleMusic,MUSIC_TVC,6 + MUSIC_LOOPED);
+					}
+					Sleep(30);
+				    	break;
 				case 'W':
 				    ply--;
 				    break;
@@ -279,23 +435,29 @@ LevelSelector()
 				case 'D':
 				    plx++;
 				    break;
+				case 'Q':
+				    gotomain=1; 
+                                    return;
+				    break;
 				case 'I':
 					index = ply*6+plx+1;
 					if(index<2 || levels[index-1].score>=levels[index-1].star1Score)
 					{
 					    LevelInfo(index);
+					    gotomain=0;
 					    return;
 					}
-				    break;
+				    //break;
 				case ' ':
 					index = ply*6+plx+1;
 					if(index<2 || levels[index-1].score>=levels[index-1].star1Score)
 					{
 						currentIndex = index;
 						StartLevel(index);
+						gotomain=0;
 						return;
 					}
-				    break;
+				    //break;
 			}
 			
 			if (plx < 0) plx = 0;
@@ -303,10 +465,10 @@ LevelSelector()
 			if (plx > 5) plx = 5;
 			if (ply > 5) ply = 5;
 
-			DrawSprite(olx+1, oly+1, 14, 58);
-			DrawSprite(plx+1, ply+1, 12, 58);
+			DrawSprite(olx+1, oly+1, SPR_IND_KERET3, 58);
+			DrawSprite(plx+1, ply+1, SPR_IND_KERET, 58);
 			
-			Sleep(5);
+			Sleep(7);
 			key = 'P';
 		}
 	}
@@ -323,13 +485,13 @@ LevelInfo(int index)
 	
 	for(i=0;i<levels[index].condyNumber;i++)
 	{
-		DrawSprite2(8+i*7,44,i,59);
+		DrawSprite2(8+i*7,44,i+gamemode*11,59);
 	}
 
 	if(levels[index].extras)
 	{
-		DrawSprite2(8,75,6,59);
-		DrawSprite2(18,75,7,59);
+		DrawSprite2(8,75,SPR_IND_DISCO+gamemode*11,59);
+		DrawSprite2(18,75,SPR_IND_CSIK+gamemode*11,59);
 	}
 
 	DrawCoolString(10,110,"SIZE:  X", 1);
@@ -348,11 +510,11 @@ LevelInfo(int index)
 
 	DrawCoolString(10,190, "MAX SCORE:" ,1); 
 	DrawCoolString(30,190,itos(levels[index].score), 1);
+	DrawCoolString(23, 230, "- SPACE -", 5);
 	
 	WaitForKeyPress(KEY_SPACE);
 }
 //}
-
 
 //{-------------------------- DrawCoolString --------------------------------
 DrawCoolString(int x, int y, char* text, int textSpeed)
@@ -365,6 +527,7 @@ DrawCoolString(int x, int y, char* text, int textSpeed)
 }
 //}
 
+#pragma link forward
 //{-------------------------- DrawCooStringPart --------------------------------
 DrawCooStringPart(int x, int y, char* text, int textSpeed, int textcolor)
 {
@@ -410,14 +573,16 @@ StartLevel(int index)
 	ptr = gameObjects;
 
 	ClearScreen();
-	DrawSprite2(40, 0,  9, 59);
-	DrawSprite2(48, 0,  9, 59);
-	DrawSprite2(56, 0,  9, 59);
+	DrawSprite2(40, 0,  SPR_IND_STAR2+gamemode*11, 59);
+	DrawSprite2(48, 0,  SPR_IND_STAR2+gamemode*11, 59);
+	DrawSprite2(56, 0,  SPR_IND_STAR2+gamemode*11, 59);
 
 	DrawCoolString(0,0, "SCORE:", 4);
 	DrawCoolString(12,0, itos(levelScore),2);
 	DrawCoolString(25,0, "LAP:",4);
 	DrawCoolString(33,0, itos(lap),2);
+
+	DrawCoolString(0,230, "                          Q-QUIT",1);
 
 	maxSizeX = lx;
 	maxSizeY = ly;
@@ -448,15 +613,25 @@ StartLevel(int index)
 		if (IsKeyDown(JOY1_DOWN) || IsKeyDown(KEY_S)) key = 'S';	
 		if (IsKeyDown(JOY1_RIGHT) || IsKeyDown(KEY_D)) key = 'D';	
 		if (IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_RET) || IsKeyDown(JOY1_FIRE)) key = ' ';	
+
+		if (IsKeyDown(KEY_M)) key = 'M';	
 		if(key!='P' && key!='Q')
 		{
 			KeyDown(key);
 			key = 'P';
 		}
-		Sleep(5);
+		Sleep(7);
 	}
 
 	if(levelScore > levels[index].score) levels[index].score = levelScore;
+
+	if(index==36 && levelScore > levels[index].star1Score && gamemode==0)  
+	{ 
+		DrawCoolString(0,0,  "  CONDENSATOR (KONDI) MODE ACTIVATED!   ", 8);
+		DrawCoolString(0,230, " ON CREDITS TYPE CONDI/CANDY TO CHANGE! ", 8);
+		Sleep(200);
+		gamemode=1;
+	};
 }
 //}
 
@@ -481,8 +656,9 @@ LastDrawnlevel(int x, int y)
 }
 //}
 
+#pragma link forward
 //{-------------------------- DrawTable --------------------------------
-DrawTable(char withWait, char fast );
+DrawTable(char withWait, char fast )
 {
    int x;
    int y;
@@ -523,18 +699,20 @@ DrawTable(char withWait, char fast );
                         candy = 5;
                         break;
                     case 'C':
-                        candy = 10;
+                        candy = SPR_IND_BOMB;
                         break;
                     case ' ':
-                        candy = 11;
+                        candy = SPR_IND_PROBASPRITE;
                         break;
                     case 'D':
-                        candy = 6;
+                        candy = SPR_IND_DISCO;
                         break;
                     case 'X':
-                        candy = 7;
+                        candy = SPR_IND_CSIK;
                         break;
                 }
+
+		if(candy!=SPR_IND_PROBASPRITE) candy=candy+gamemode*11;
 
 		DrawSprite(x, y, candy, x+y*maxSizeX);
 
@@ -542,7 +720,7 @@ DrawTable(char withWait, char fast );
             }
         }
 
-	DrawSprite(posx, posy, 12 + moveMode, 58);
+	DrawSprite(posx, posy, SPR_IND_KERET + moveMode, 58);
 
 	lastposx = posx;
 	lastposy = posy;
@@ -552,17 +730,18 @@ DrawTable(char withWait, char fast );
 		lastDrawnlevel[i] = actualLevel[i];
 	}
 	
-	if (withWait) Wait(fast);
+	//if (withWait) Wait(fast);
 
-	if(levelScore>=levels[currentIndex].star1Score) DrawSprite2(40, 0,  8, 59);
-	if(levelScore>=levels[currentIndex].star2Score) DrawSprite2(48, 0,  8, 59);
-	if(levelScore>=levels[currentIndex].star3Score) DrawSprite2(56, 0,  8, 59);
+	if(levelScore>=levels[currentIndex].star1Score) DrawSprite2(40, 0,  SPR_IND_STAR+gamemode*11, 59);
+	if(levelScore>=levels[currentIndex].star2Score) DrawSprite2(48, 0,  SPR_IND_STAR+gamemode*11, 59);
+	if(levelScore>=levels[currentIndex].star3Score) DrawSprite2(56, 0,  SPR_IND_STAR+gamemode*11, 59);
 	DbDrawStrEx(12,0, itos(levelScore));
 	space = itos(lap);
 	DbDrawStrEx(33,0, strcat(space, " "));
 }
 //}
 
+#pragma link forward
 //{-------------------------- DrawSprite --------------------------------
 DrawSprite(int x, int y, int candy, int index)
 {
@@ -572,22 +751,31 @@ DrawSprite(int x, int y, int candy, int index)
 	xonscreen= x*8 + startX;
 	yonscreen= y*30 + startY;
 	
-	gIndex = DbInitGameObject(ptr,xonscreen,yonscreen,candy,GOFLG_VISIBLE, DbSprite16c8,0,0);
+	gIndex = DbInitGameObject(ptr,xonscreen,yonscreen,candy,GOFLG_VISIBLE, DbSprite16c16Mask,0,0);
 	
 	DbClipSprite(gIndex);
 	DbDrawSprite(gIndex);
 }
 //}
 
+#pragma link forward
 //{-------------------------- DrawSprite2 --------------------------------
 DrawSprite2(int x, int y, int candy, int index)
 {
-	gIndex = DbInitGameObject(ptr,x,y,candy,GOFLG_VISIBLE, DbSprite16c8,0,0);
+	gIndex = DbInitGameObject(ptr,x,y,candy,GOFLG_VISIBLE, DbSprite16c16Mask,0,0);
 	
 	DbClipSprite(gIndex);
 	DbDrawSprite(gIndex);
 }
-//}
+
+/*
+#pragma link forward
+DrawSprite3(int x, int y, int obj, int index)
+{
+	gIndex2[index] = DbInitGameObject(ptr++,x,y,obj,GOFLG_VISIBLE, DbSprite16c16Mask,backPtr,0);
+	backPtr+=88;
+}
+*/
 
 //{-------------------------- ChangeMoveMode --------------------------------
 ChangeMoveMode()
@@ -630,9 +818,7 @@ ChangeMoveMode()
 				SetLevel(posx,posy, 'C' );
 				levelScore+=2;
 			        
-				Sound(2000,3,15);
-			        Sound(1000,3,15);
-			        Sound(500,3,15);
+				SoundEffect(0, CrushSound);
 			}
 			else if (Level(selectedPosx,selectedPosy)=='D')
 			{
@@ -651,10 +837,7 @@ ChangeMoveMode()
 				
 				SetLevel(selectedPosx,selectedPosy, 'C');
 				levelScore+=2;
-				Sound(2000,3,15);
-			        Sound(1000,3,15);
-			        Sound(500,3,15);
-
+				SoundEffect(0, CrushSound);
 			}
 			else if (Level(posx,posy)=='X')
 			{	
@@ -675,9 +858,7 @@ ChangeMoveMode()
 					}
 				}
 
-				Sound(2000,3,15);
-			        Sound(1000,3,15);
-			        Sound(500,3,15);
+				SoundEffect(0, CrushSound);
 			}
 			else if (Level(selectedPosx,selectedPosy)=='X')
 			{
@@ -697,9 +878,7 @@ ChangeMoveMode()
 						levelScore+=2;
 					}
 				}
-				Sound(2000,3,15);
-			        Sound(1000,3,15);
-			        Sound(500,3,15);
+				SoundEffect(0, CrushSound);
 			}
 			else
 			{
@@ -838,21 +1017,10 @@ CheckTable(int draw)
 }
 //}
 
-//{-------------------------- Wait --------------------------------
-Wait(int fast)
-{
-    int wait;
-    wait = speed;
-    //if (fast) wait = speed / 2;
-    //Sleep(wait);
-}
-//}
-
 //{-------------------------- Crush --------------------------------
 Crush (int cx1, int cy1, int cx2, int cy2, int cx3, int cy3, int cx4, int cy4, int cx5, int cy5, int draw)
 {
-    Sound(2000,3,15);
-    Sound(1000,3,15);
+    SoundEffect(0, Crush2Sound);
 
     SetLevel(cx1, cy1, 'C');
     SetLevel(cx2, cy2, 'C');
@@ -927,12 +1095,12 @@ Fall(int draw)
 		    
 		    if(pair)
                     {
-		    	Sound(3723,2,15);
+			SoundEffect(1, Fall1Sound);
 	 	        pair=0;
 		    }
                     else
 		    {
-		    	Sound(3823,2,15);
+			SoundEffect(2, Fall2Sound);
                         pair=1;
 	            }
                 }
@@ -960,7 +1128,9 @@ RandomColor()
 
     color = ' ';
 
-    rng = DbRndRange(0)*levelCandyNumber/256;
+    //rng = DbRndRange(0)*levelCandyNumber/256;
+    rng = DbRndRange(levelCandyNumber-1);
+
 
     switch (rng)
     {
@@ -988,6 +1158,26 @@ RandomColor()
 }
 //}
 
+//{-------------------------- Random --------------------------------
+Random(int maxNumber)
+{
+    	int rng;
+
+	rng = DbRndRange(maxNumber);
+/*
+	if(maxNumber>15)
+	{
+		rng = DbRndRange(maxNumber);
+	}
+	else
+	{	 
+    		rng = DbRndRange(maxNumber)*maxNumber/256;
+	}
+	*/
+    	return rng;
+}
+//}
+
 //{-------------------------- KeyDown --------------------------------
 KeyDown(char KeyCode)
 {
@@ -998,6 +1188,19 @@ KeyDown(char KeyCode)
 
     switch (KeyCode)
     {
+	case 'M':
+	   	if(music==1)	
+	    	{
+			music = 0;
+			DbStopMusic();
+		}
+		else
+		{
+			music = 1;
+			DbStartMusic(TitleMusic,MUSIC_TVC,6 + MUSIC_LOOPED);
+		}
+		Sleep(30);
+	    	break;
         case 'W':
             posy--;
             break;
@@ -1013,6 +1216,7 @@ KeyDown(char KeyCode)
         case ' ':
             moveMode = !moveMode;
             ChangeMoveMode();
+	    Sleep(3);
             break;
     }
 
@@ -1033,219 +1237,151 @@ KeyDown(char KeyCode)
 }
 //}
 
-//{	A grafikus munkaasztalból importált adatok.
-#asm   /* A grafikus munkaasztalból importált adatok. NE VÁLTOZTASD MEG! */
-		;{	Enumerált sprite indexek. Célszerű a főprogram elejére másolni!
-				enum	SPR_IND_GREEN, //0
-					SPR_IND_ORANGE2, //139
-					SPR_IND_PURPLE2, //322
-					SPR_IND_BLUE2, //473
-					SPR_IND_YELLOW32, //639    (0,156,286,476,565,719)
-					SPR_IND_RED, //795
-					SPR_IND_DISCO, //925
-					SPR_IND_CSIK, //1115
-					SPR_IND_STAR, //1204
-					SPR_IND_EMPTYSTAR //1366 (121)
-					SPR_IND_CRUSH2, //1487
-					SPR_IND_SPACE2, //1697
-					SPR_IND_KERET, //1737
-					SPR_IND_KERET2, //1821
-					SPR_IND_KERET3, //1905
-					SPR_IND_MINISTAR, //1989
-					SPR_IND_KEZDO //2003
 
-		;}
+//{-------------------------- SoundEffect -------------------------- 
+SoundEffect(int ch, char *soundSample)
+{
+	if(music==0) DbStartSoundEffect(ch, soundSample);
+}
+//}
 
-	qGraphicsBaseAddr
-	GfxBaseAddr		dw	SpriteCount-GfxBaseAddr,0,0
+//{-------------------------- ItCallBack -------------------------- 
+ItCallBack()
+{
+    	IncTimer();
+    	ReadKeyMatrix();
+	DbMusicPlayer_IT();
+	DbSoundEffect_IT();
+}
+//}
 
-	;{   Sprite-ok adatai (Automatikusan beemelve!)
-	SpriteCount		db 17
-	SpriteIndexArray
-				dw	0,139,322,473,639,795,925,1115,1204,1366,1487,1697,1737,1821,1905,1989,2003
+//{	TitleMusic
+#asm
+	qTitleMusic
 
-	SpriteDataBuffer	ds	0,0
-	DecompressBuffer	ds	0,0
+	;ChannelNr
+				db	4
+	;InsturmentNr
+				db	2
+	;TrackSize
+				db	10
+	;PatternSize
+				db	64
+	;CardFlag
+				db	0
+	;PatternOffs
+				dw	49
+	;InstrumentOffs
+				dw	105
+	;Track0
+				db	16,4,4,12,12,4,4,24,24,4
+	;Track1
+				db	1,5,5,9,9,5,5,13,13,5
+	;Track2
+				db	2,6,6,10,10,6,6,14,14,6
+	;Track3
+				db	3,7,7,11,11,7,7,15,15,7
+	;PatternOffset
+				dw	109,166,167,168,169,297,425,426,427,430,431,432,433,561,689,690,691,813,814,815,816,819,820,821,822,894,895,896
+	;InstrumentOffset
+				dw	897,900
 
-	SpriteBaseAddr
-	green
-				db	8+128			; A sprite szélessége byte-okban
-				db	30			; A sprite magassága
-				db	0,3,240,255,48,0,60,0			; A sprite szín adatai
-				db	193,193,17,20,66,34,66,68,65,17,17,66,146,36,148,17,17,156,146,36,17,17,148,66,146,36,17,17,148,66,146,68
-				db	17,17,180,17,17,36,172,17,17,36,51,164,17,17,36,51,52,156,17,17,36,70,156,66,17,17,36,164,66,17,17,36
-				db	164,66,17,17,36,164,66,17,17,36,164,66,17,17,36,164,66,17,17,36,164,66,17,17,34,164,66,17,17,146,156,66
-				db	17,17,154,66,146,17,17,178,17,17,178,17,17,178,17,17,178,17,17,178,17,17,178,17,17,178,17,17,18,162,33,17
-				db	193
-	orange2
-				db	8+128			; A sprite szélessége byte-okban
-				db	30			; A sprite magassága
-				db	0,3,12,204,252,0,60,0			; A sprite szín adatai
-				db	193,193,153,38,33,153,145,18,68,70,153,145,20,68,70,33,145,145,34,50,52,65,145,145,52,148,66,145,145,36,67,68
-				db	66,145,17,18,70,51,52,67,145,17,18,67,50,35,52,145,17,19,68,35,51,54,145,17,19,68,147,68,145,17,19,68
-				db	147,52,33,17,17,19,70,35,51,52,33,17,17,19,70,35,51,38,33,17,17,19,70,35,51,36,33,17,17,19,70,35
-				db	51,68,33,17,17,19,70,35,51,68,33,17,17,19,68,35,35,67,145,17,19,70,148,67,145,17,19,54,68,70,99,145
-				db	17,18,52,68,102,66,145,17,18,52,68,100,66,145,145,51,68,67,50,145,145,51,148,49,145,145,35,51,67,33,145,145
-				db	19,147,33,145,145,18,146,153,153,34,33,153,193
-	purple2
-				db	8+128			; A sprite szélessége byte-okban
-				db	30			; A sprite magassága
-				db	0,3,207,15,0,0,0,0			; A sprite szín adatai
-				db	193,193,145,50,35,50,35,145,145,162,145,17,18,162,49,17,17,18,50,154,33,17,17,18,35,34,51,34,33,17,17,18
-				db	50,35,50,34,33,17,17,50,34,50,146,33,17,17,146,51,146,35,17,17,178,17,18,162,50,34,49,18,146,50,35,146
-				db	33,18,162,35,34,33,18,50,154,35,35,33,18,34,50,34,35,51,34,49,18,178,33,19,178,33,18,34,50,35,154,33
-				db	17,178,17,17,178,17,17,146,50,50,34,33,17,17,50,162,33,17,17,18,162,33,17,17,18,162,33,17,17,19,162,49
-				db	17,17,19,162,145,145,154,35,145,169,49,145,193
-	blue2
-				db	8+128			; A sprite szélessége byte-okban
-				db	30			; A sprite magassága
-				db	0,3,195,243,255,51,0,0			; A sprite szín adatai
-				db	193,193,153,18,33,153,153,146,33,145,145,154,33,145,17,18,154,33,145,17,18,162,33,17,17,170,145,17,34,33,154,33
-				db	17,17,34,33,18,154,17,17,34,35,51,83,146,17,18,34,20,83,51,146,17,17,34,21,19,51,50,145,18,146,35,51
-				db	53,18,17,17,34,33,35,147,34,17,18,34,37,35,51,85,34,17,18,18,17,18,51,81,18,17,18,17,21,50,81,19
-				db	18,17,19,18,33,19,147,50,17,17,33,34,35,51,82,34,17,17,18,162,33,17,17,49,18,153,33,17,17,50,17,154
-				db	145,17,18,17,18,34,18,145,17,19,33,145,81,145,145,82,145,81,145,145,21,33,161,153,149,153,193,193
-	yellow32
-				db	8+128			; A sprite szélessége byte-okban
-				db	30			; A sprite magassága
-				db	0,3,12,252,0,0,60,0			; A sprite szín adatai
-				db	193,193,193,153,22,102,33,145,153,19,51,49,145,153,99,51,50,145,153,147,54,145,145,18,54,147,145,145,22,155,97,17
-				db	145,19,99,147,97,17,145,99,99,51,54,49,17,145,99,147,54,50,17,145,163,54,17,145,163,99,17,17,22,163,99,17
-				db	17,22,99,163,17,17,22,99,54,155,33,17,19,99,155,54,97,17,22,102,155,54,33,17,22,38,147,54,102,17,17,22
-				db	38,99,51,54,102,17,17,18,34,99,51,54,35,17,145,98,35,51,98,38,17,145,98,34,102,34,98,17,145,38,154,97
-				db	17,145,22,98,34,38,33,17,153,38,102,98,145,161,18,153,193,193
-	red
-				db	8+128			; A sprite szélessége byte-okban
-				db	30			; A sprite magassága
-				db	0,3,12,204,0,0,0,0			; A sprite szín adatai
-				db	193,193,193,193,145,18,33,161,145,146,161,145,34,50,161,145,35,50,33,153,17,18,35,51,33,153,17,18,35,51,33,153
-				db	17,18,35,50,33,153,145,35,50,50,153,145,34,51,50,153,145,34,51,50,33,145,145,34,147,34,145,145,34,35,51,50
-				db	145,145,18,35,147,33,17,145,18,35,51,35,49,17,145,18,34,51,35,34,17,153,34,35,51,50,17,153,34,35,51,50
-				db	17,153,18,34,35,34,17,161,34,35,34,17,161,146,33,17,169,34,145,193,193,193,193,193
-	disco
-				db	8+128			; A sprite szélessége byte-okban
-				db	30			; A sprite magassága
-				db	0,3,12,192,48,255,60,63			; A sprite szín adatai
-				db	193,145,48,51,48,49,145,145,51,67,48,51,145,17,19,51,67,147,49,17,17,19,147,3,83,51,17,17,51,50,51,19
-				db	35,51,17,17,51,50,50,51,3,51,17,17,147,54,34,52,80,49,19,147,3,50,52,48,49,19,52,51,35,147,50,49
-				db	19,52,51,19,163,19,163,3,147,147,35,51,34,3,35,51,51,50,50,99,35,83,34,51,51,50,54,99,51,35,35,51
-				db	54,50,35,99,51,53,147,54,53,155,48,53,51,54,53,147,35,50,53,51,155,35,19,51,48,51,155,35,51,34,147,19
-				db	163,34,51,49,19,49,147,35,51,19,49,19,49,147,87,99,19,49,19,147,35,83,99,19,49,17,179,17,17,19,54,51
-				db	48,147,17,17,19,51,50,155,17,17,19,163,49,17,145,163,145,145,163,145
-	csik
-				db	8+128			; A sprite szélessége byte-okban
-				db	30			; A sprite magassága
-				db	0,3,12,192,240,255,0,0			; A sprite szín adatai
-				db	193,145,16,144,1,145,145,160,145,17,16,160,1,17,193,193,17,176,17,17,176,17,17,180,17,17,180,17,16,176,1,16
-				db	176,1,18,178,33,18,178,33,192,192,197,197,192,192,18,178,33,18,178,33,16,168,3,1,16,176,1,17,180,17,17,180
-				db	17,17,176,17,17,16,160,1,17,145,160,145,145,160,145
-	star
-				db	8+128			; A sprite szélessége byte-okban
-				db	30			; A sprite magassága
-				db	0,3,252,0,0,0,60,63			; A sprite szín adatai
-				db	161,97,153,161,97,153,161,103,153,153,22,102,153,153,22,102,153,153,118,102,153,153,38,34,97,145,153,38,39,33,145,145
-				db	118,102,146,113,17,17,18,34,102,34,38,98,113,17,158,34,38,34,33,17,150,98,146,38,97,17,114,102,98,34,38,102
-				db	97,17,22,150,98,150,113,17,22,38,166,17,17,23,166,103,17,145,158,98,97,17,145,118,150,98,145,145,114,150,98,145
-				db	145,114,150,98,113,17,145,114,150,98,113,17,145,98,98,98,98,33,17,145,34,38,98,102,33,17,145,34,102,118,102,33
-				db	17,145,38,103,23,102,97,17,145,102,113,17,118,97,17,145,119,145,23,113,17,193,193,193
-	emptystar
-				db	8+128			; A sprite szélessége byte-okban
-				db	30			; A sprite magassága
-				db	0,3,0,0,0,0,0,0			; A sprite szín adatai
-				db	161,113,153,161,113,153,161,119,153,153,23,119,153,153,23,119,153,153,151,153,153,151,113,145,153,151,113,145,145,167,113,17
-				db	17,23,175,113,17,183,113,17,183,113,17,183,113,17,23,175,113,17,23,175,17,17,23,175,17,145,167,113,17,145,23,159
-				db	145,145,23,159,145,145,167,113,17,145,167,113,17,145,167,113,17,145,167,113,17,145,167,113,17,145,151,23,119,113,17,145
-				db	119,113,17,119,113,17,145,119,145,23,113,17,193,193,193
+	;Patterns
+				db	25,16,27,16,30,16,32,16,34,16,37,16,255,16,45,16,26,16,28,16,29,16,31,16,33,16,35,16,36,16
+				db	38,32,49,16,50,16,48,16,47,16,47,16,47,16,47,16,48,16,48,16,48,16,48,16,49,16,163
 
-	crush2
-				db	8+128			; A sprite szélessége byte-okban
-				db	30			; A sprite magassága
-				db	0,3,12,252,255,0,60,0			; A sprite szín adatai
-				db	193,153,34,33,153,145,22,50,98,153,18,33,102,34,102,98,97,17,35,38,102,38,51,99,34,17,38,38,150,51,54,34
-				db	17,98,38,102,35,99,54,98,17,34,150,98,99,51,98,17,38,102,99,102,38,51,98,17,102,99,51,102,34,99,98,17
-				db	34,99,51,54,98,102,98,17,102,99,51,54,102,54,98,17,102,99,51,54,98,34,35,17,34,102,51,54,158,17,34,174
-				db	99,17,38,38,150,38,54,99,17,99,102,38,99,38,54,98,17,38,102,98,34,38,54,102,17,18,102,38,102,38,51,99
-				db	17,22,34,51,102,38,98,98,17,22,34,99,54,38,102,54,17,19,150,54,98,98,35,33,22,50,158,34,36,33,22,102
-				db	38,102,98,98,102,33,17,102,98,102,38,98,38,33,17,22,54,102,70,98,18,17,17,19,99,67,102,38,145,145,158,97
-				db	145,145,98,38,97,33,145,193
-	space2
-				db	8+128			; A sprite szélessége byte-okban
-				db	30			; A sprite magassága
-				db	0,3,0,0,0,0,0,0			; A sprite szín adatai
-				db	193,193,193,193,193,193,193,193,193,193,193,193,193,193,193,193,193,193,193,193,193,193,193,193,193,193,193,193,193,193
+				db	192
 
-	Keret
-				db	8+128			; A sprite szélessége byte-okban
-				db	30			; A sprite magassága
-				db	0,204,0,0,0,0,0,0			; A sprite szín adatai
-				db	193,193,193,193,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17
-				db	176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17
-				db	17,176,17,17,176,17,193,193,193,193
+				db	192
 
-	Keret2
-				db	8+128			; A sprite szélessége byte-okban
-				db	30			; A sprite magassága
-				db	0,255,0,0,0,0,0,0			; A sprite szín adatai
-				db	193,193,193,193,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17
-				db	176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17
-				db	17,176,17,17,176,17,193,193,193,193
+				db	192
 
-	Keret3
-				db	8+128			; A sprite szélessége byte-okban
-				db	30			; A sprite magassága
-				db	0,3,0,0,0,0,0,0			; A sprite szín adatai
-				db	193,193,193,193,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17
-				db	176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17,17,176,17
-				db	17,176,17,17,176,17,193,193,193,193
+				db	55,16,48,16,48,16,55,16,48,16,48,16,55,16,48,16,52,16,48,16,48,16,52,16,48,16,48,16,52,16
+				db	48,16,53,16,48,16,48,16,53,16,48,16,48,16,53,16,48,16,50,16,43,16,43,16,50,16,43,16,43,16
+				db	50,16,43,16,55,16,48,16,48,16,55,16,48,16,48,16,55,16,48,16,52,16,48,16,48,16,52,16,48,16
+				db	48,16,52,16,48,16,53,16,48,16,48,16,53,16,48,16,48,16,53,16,48,16,50,16,43,16,43,16,50,16
+				db	43,16,43,16,50,16,53,16
 
-				db	1+128			; A sprite szélessége byte-okban
-				db	4			; A sprite magassága
-				db	0,3,252,0,0,0,0,0			; A sprite szín adatai
-				db	17,33,33,17
+				db	36,16,43,16,43,16,36,16,43,16,43,16,36,16,43,16,36,16,40,16,40,16,36,16,40,16,40,16,36,16
+				db	40,16,36,16,41,16,41,16,36,16,41,16,41,16,36,16,41,16,43,16,38,16,38,16,43,16,38,16,38,16
+				db	43,16,38,16,36,16,43,16,43,16,36,16,43,16,43,16,36,16,43,16,36,16,40,16,40,16,36,16,40,16
+				db	40,16,36,16,40,16,36,16,41,16,41,16,36,16,41,16,41,16,36,16,41,16,43,16,38,16,38,16,43,16
+				db	38,16,38,16,43,16,38,16
 
-	kezdo
-				db	54+128			; A sprite szélessége byte-okban
-				db	53			; A sprite magassága
-				db	0,3,12,192,0,0,0,0			; A sprite szín adatai
-				db	249,249,249,201,249,249,249,201,249,249,249,201,249,249,249,201,249,249,249,201,249,249,249,201,249,249,249,201,249,249,249,201
-				db	249,249,249,201,249,249,249,201,249,249,249,201,249,249,249,201,249,249,249,201,249,249,249,201,249,249,249,201,249,249,249,201
-				db	169,50,34,35,34,33,17,146,17,50,34,3,34,35,154,17,50,34,33,17,50,34,35,34,35,154,17,50,34,18,34,33
-				db	19,34,33,17,50,34,50,34,18,34,33,145,169,50,34,35,34,33,18,146,33,50,34,3,34,35,154,33,50,34,33,17
-				db	50,34,35,34,35,154,33,50,34,18,34,33,50,146,17,50,34,50,34,18,34,33,145,169,50,154,33,50,146,33,50,34
-				db	35,34,35,154,33,50,34,33,17,50,34,32,34,35,154,33,50,34,18,34,33,154,33,50,34,50,34,18,34,33,145,169
-				db	50,154,35,154,33,50,34,35,34,35,162,50,34,33,17,50,154,35,154,33,50,34,18,34,35,154,33,50,34,50,34,18
-				db	34,33,145,169,50,154,19,162,50,34,35,34,35,34,33,146,50,34,33,17,50,154,19,162,50,34,18,34,35,154,33,50
-				db	34,50,34,19,34,33,145,169,50,154,19,34,33,146,50,34,35,34,35,34,33,146,50,34,33,17,50,154,19,34,35,50
-				db	34,50,34,18,34,35,34,33,34,33,50,34,50,34,19,34,33,145,169,50,154,19,34,33,146,50,154,35,34,33,146,50
-				db	34,33,17,50,154,19,34,35,50,34,50,34,18,34,35,34,33,34,33,50,34,50,34,19,34,33,145,169,50,154,19,34
-				db	33,146,50,154,35,34,33,146,50,34,33,17,50,154,19,34,35,50,34,50,34,18,34,35,34,33,34,33,50,34,50,34
-				db	19,34,33,145,169,50,146,33,19,34,33,146,50,154,35,34,33,146,50,34,33,17,50,146,33,19,34,35,50,34,50,34
-				db	18,34,35,146,145,50,34,50,34,19,34,33,145,169,50,146,33,19,34,33,146,50,154,35,34,33,146,50,34,33,17,50
-				db	146,17,19,162,50,34,18,34,35,146,145,50,154,19,34,33,145,169,50,146,17,19,34,33,146,50,154,35,34,33,146,50
-				db	34,33,17,50,146,17,19,154,33,50,34,18,34,33,146,33,17,50,154,19,34,33,145,169,50,146,17,19,34,33,146,50
-				db	154,35,34,33,146,50,34,33,17,50,34,33,17,19,154,33,50,34,18,34,33,50,146,17,50,154,19,34,33,145,169,50
-				db	146,17,19,34,33,146,50,154,35,34,33,146,50,34,33,17,50,34,33,17,19,154,17,50,34,18,34,33,19,146,33,50
-				db	154,19,34,33,145,169,50,146,33,19,34,33,146,50,154,35,34,33,146,50,34,33,17,50,146,17,19,154,33,50,34,18
-				db	34,33,17,146,33,50,154,19,34,33,145,169,50,154,19,34,33,146,50,154,35,34,33,146,50,34,33,17,50,146,17,19
-				db	154,33,50,34,18,34,33,17,50,34,33,50,34,50,34,19,34,33,145,169,50,154,19,34,33,146,50,154,35,34,33,146
-				db	50,34,33,17,50,146,33,19,162,50,34,18,34,33,17,19,34,33,50,34,50,34,19,34,33,145,169,50,154,19,34,33
-				db	146,50,154,35,34,33,146,50,34,33,17,50,154,19,162,50,34,18,34,33,34,35,34,33,50,34,50,34,19,34,33,145
-				db	169,50,154,19,34,33,146,50,154,35,34,33,146,50,34,33,17,50,154,19,162,50,34,18,34,35,34,35,34,33,50,34
-				db	50,34,17,34,33,145,169,50,154,19,34,33,146,50,154,35,34,33,146,50,34,33,17,50,154,19,146,18,34,50,34,18
-				db	34,35,34,35,34,33,50,34,50,34,17,34,33,145,169,50,154,35,34,33,146,50,34,50,34,35,34,33,146,50,34,33
-				db	17,50,154,35,34,33,18,34,50,34,18,34,35,34,33,34,33,50,34,50,34,169,169,50,154,35,162,50,34,50,34,35
-				db	162,50,34,33,17,50,154,35,34,33,18,34,18,154,35,34,33,34,33,50,34,50,34,19,34,33,145,169,50,154,33,154
-				db	33,50,34,18,34,35,162,50,34,33,17,50,154,35,34,33,18,34,18,154,19,154,33,50,34,50,34,19,34,33,145,169
-				db	50,154,33,50,146,33,50,34,18,34,35,154,33,50,34,33,17,50,34,32,34,35,34,33,18,34,19,154,17,154,33,50
-				db	34,50,34,19,34,33,145,169,50,34,35,34,33,18,146,33,50,34,18,34,35,154,33,50,34,33,17,50,34,35,34,35
-				db	34,33,18,34,17,154,17,18,146,33,50,34,50,34,19,34,33,145,169,50,34,35,34,33,17,146,17,50,34,18,34,35
-				db	154,17,50,34,33,17,50,34,35,34,35,34,33,18,34,17,18,34,33,145,146,17,50,34,50,34,19,34,33,145,249,249
-				db	249,201,249,249,249,201,249,249,249,201,249,249,249,201,249,249,249,201,249,249,249,201,249,249,249,201,249,249,249,201,249,249
-				db	249,201,249,249,249,201,249,249,249,201,249,249,249,201
+				db	192
 
-	;}
+				db	192
+
+				db	30,16,191
+
+				db	192
+
+				db	192
+
+				db	192
+
+				db	48,16,43,16,43,16,48,16,43,16,43,16,48,16,52,16,50,16,43,16,43,16,50,16,43,16,43,16,50,16
+				db	53,16,52,16,43,16,43,16,52,16,43,16,43,16,52,16,43,16,50,16,43,16,43,16,50,16,53,16,52,16
+				db	50,16,52,16,48,16,43,16,43,16,48,16,43,16,43,16,48,16,52,16,50,16,43,16,43,16,50,16,43,16
+				db	43,16,50,16,53,16,52,16,43,16,43,16,52,16,43,16,43,16,52,16,55,16,57,16,55,16,53,16,52,16
+				db	50,16,52,16,53,16,50,16
+
+				db	36,16,43,16,43,16,36,16,43,16,43,16,36,16,43,16,36,16,40,16,40,16,36,16,40,16,40,16,36,16
+				db	40,16,36,16,41,16,41,16,36,16,41,16,41,16,36,16,41,16,43,16,38,16,38,16,43,16,38,16,38,16
+				db	43,16,38,16,36,16,43,16,43,16,36,16,43,16,43,16,36,16,43,16,36,16,40,16,40,16,36,16,40,16
+				db	40,16,36,16,40,16,36,16,41,16,41,16,36,16,41,16,41,16,36,16,41,16,43,16,38,16,38,16,43,16
+				db	38,16,38,16,43,16,38,16
+
+				db	192
+
+				db	192
+
+				db	55,16,48,16,48,16,55,16,48,16,48,16,55,16,48,16,52,16,48,16,48,16,52,16,48,16,48,16,52,16
+				db	48,16,53,16,48,16,48,16,53,16,48,16,48,16,53,16,48,16,50,16,43,16,43,16,50,16,43,16,43,16
+				db	50,16,43,16,55,16,48,16,48,16,55,16,48,16,48,16,55,16,48,16,52,16,48,16,48,16,52,16,48,16
+				db	48,16,52,16,48,16,53,16,48,16,48,16,53,16,48,16,48,16,53,16,48,16,50,16,43,16,43,16,50,16
+				db	43,64
+
+				db	192
+
+				db	192
+
+				db	192
+
+				db	30,16,191
+
+				db	192
+
+				db	192
+
+				db	192
+
+				db	55,32,55,32,55,32,55,32,55,32,55,16,55,32,57,32,55,16,53,32,53,32,53,32,53,32,53,32,53,16
+				db	53,32,52,32,50,16,55,32,55,32,55,32,55,32,55,32,55,16,55,32,57,32,55,16,53,32,52,16,50,32
+				db	52,32,50,16,55,32,52,32,50,32,52,32
+
+				db	192
+
+				db	192
+
+				db	192
 
 
+	;Instruments
+				db	15,9,128
+
+				db	128
+
+
+
+			; Exportálva 901 byte
+
+#endasm
+//}
+
+#pragma link forward
+//{-------------------------- font -------------------------- 
+#asm
 	qKKF
 				db	2	; betű szélesség
 				db	9	; betű magasság
@@ -1333,3 +1469,418 @@ KeyDown(char KeyCode)
 
 #endasm
 //}
+#pragma link 
+
+
+
+//{	Crush_Sound
+#asm
+	qCrushSound
+				db	3
+				dw	3000+(15*4096)
+				db	3
+				dw	1000+(15*4096)
+				db	3
+				dw	500+(15*4096)
+				db	0
+#endasm
+//}
+
+//{	Crush2_Sound
+#asm
+	qCrush2Sound
+				db	3
+				dw	3000+(15*4096)
+				db	3
+				dw	1000+(15*4096)
+				db	0
+#endasm
+//}
+
+
+//{	Fall1_Sound
+#asm
+	qFall1Sound
+				db	2
+				dw	3723+(15*4096)
+				db	0
+#endasm
+//}
+
+//{	Fall2_Sound
+#asm
+	qFall2Sound
+				db	2
+				dw	3823+(15*4096)
+				db	0
+#endasm
+//}
+
+//{	A grafikus munkaasztalból importált adatok.
+#pragma rem START_GFX_DATA
+
+#asm   /* A grafikus munkaasztalból importált adatok. NE VÁLTOZTASD MEG! */
+
+	qGraphicsBaseAddr
+	GfxBaseAddr		dw	SpriteCount-GfxBaseAddr,0,0
+
+	;{   Sprite-ok adatai (Automatikusan beemelve!)
+	SpriteCount		db 28
+	SpriteIndexArray
+				dw	0,242,484,726,968,1210,1452,1694,1936,2178,2420,2662,2904,3146,3388,3630,3872,4114,4356,4598,4840,5082,5324,5566,5808,6050,6292,6298
+
+	SpriteDataBuffer	ds	0,0
+	DecompressBuffer	ds	0,0
+
+	SpriteBaseAddr
+	qblue
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,83,163,3,3,3,3,3,67,195,211,3,3,3
+				db	3,3,193,195,195,163,3,3,3,67,195,195,195,211,3,3,3,193,195,195,195,195,163,3,3,195,195,243,243,195,163,3
+				db	3,195,211,243,243,227,163,3,66,195,215,251,243,227,243,3,67,195,255,251,243,243,211,3,66,195,247,251,247,251,211,3
+				db	67,211,243,243,247,251,211,3,66,211,243,243,243,243,211,3,66,195,243,243,243,227,211,3,66,195,211,243,243,211,243,3
+				db	3,193,195,195,195,211,163,3,3,192,195,211,243,243,163,3,3,192,192,195,211,227,163,3,3,66,193,193,227,211,3,3
+				db	3,3,192,195,195,163,3,3,3,3,66,193,194,3,3,3,3,3,3,192,129,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+	qyellow
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,255,3,3,3,3,3,3,87,254,171,3,3,3,3,3,87,252,188,3,3,3,3,3,255,252,188,3,3,3
+				db	3,3,254,253,252,41,3,3,3,3,254,252,254,41,3,3,3,22,252,252,254,41,3,3,3,22,188,252,254,41,3,3
+				db	3,22,252,252,254,188,3,3,3,22,188,252,253,188,3,3,3,124,188,252,253,188,41,3,3,124,124,252,253,188,9,3
+				db	3,124,124,252,252,252,41,3,3,92,124,252,252,252,41,3,3,92,124,252,252,124,9,3,3,92,60,252,188,252,41,3
+				db	3,92,60,60,60,252,9,3,3,92,188,60,60,252,41,3,3,28,188,60,124,188,9,3,3,22,252,252,252,60,9,3
+				db	3,6,124,252,252,44,3,3,3,3,60,60,60,9,3,3,3,3,6,12,12,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+	qred
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,13,3,3,3,3,3,3,6,76,11,3,3,3,3,3,6,204,137,3,3,3,3,3,12,141,141,3,3,3,3
+				db	3,12,204,141,3,3,3,3,3,12,78,204,3,3,3,3,3,12,15,141,3,3,3,3,3,12,141,204,11,3,3,3
+				db	3,12,204,204,11,3,3,3,3,6,76,204,141,3,3,3,3,6,76,204,78,11,3,3,3,6,12,204,204,15,3,3
+				db	3,3,12,76,204,204,3,3,3,3,6,76,204,204,11,3,3,3,6,12,204,204,14,3,3,3,3,12,12,204,14,3
+				db	3,3,3,12,76,76,14,3,3,3,3,6,12,76,12,3,3,3,3,3,12,12,12,3,3,3,3,3,6,12,12,3
+				db	3,3,3,3,3,12,9,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+	qbrawn
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,86,169,3,3,3
+				db	3,3,3,252,60,9,3,3,3,3,3,188,60,41,3,3,3,3,86,60,60,41,3,3,3,3,86,60,60,44,3,3
+				db	3,3,22,60,188,60,3,3,3,3,188,124,252,44,3,3,3,3,60,172,92,60,3,3,3,3,60,188,12,188,3,3
+				db	3,3,60,188,44,60,3,3,3,3,28,28,44,188,3,3,3,3,60,60,44,60,3,3,3,3,28,28,44,60,3,3
+				db	3,3,60,12,12,188,3,3,3,3,28,172,12,188,3,3,3,3,28,252,252,60,3,3,3,3,28,124,188,60,3,3
+				db	3,3,22,60,60,44,3,3,3,3,22,60,60,44,3,3,3,3,6,60,60,9,3,3,3,3,3,60,60,9,3,3
+				db	3,3,3,22,41,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+	qpurple
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,195,131,67,131,3,3
+				db	3,67,135,15,195,195,3,3,3,67,15,135,135,75,3,3,3,67,15,75,15,75,3,3,3,67,31,195,75,75,131,3
+				db	3,15,15,75,135,15,131,3,3,195,195,195,195,75,135,3,3,135,15,151,107,195,75,11,67,135,195,15,31,135,15,131
+				db	67,15,107,15,15,195,135,131,67,15,195,135,15,135,31,131,67,15,75,15,107,135,15,131,67,15,135,135,135,135,15,131
+				db	7,135,75,75,195,135,195,11,3,195,195,135,135,75,195,3,3,195,31,195,15,47,75,3,3,75,135,107,31,31,75,3
+				db	3,75,75,75,75,135,75,3,3,67,15,75,15,15,195,3,3,67,15,75,135,135,131,3,3,67,15,75,75,195,11,3
+				db	3,7,195,135,195,135,11,3,3,3,15,11,75,135,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+	qgreen
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,48,48,48,48,33,3,3,18,240,240,240,240,176,3,3,18,240,240,240,240,176,3
+				db	3,18,112,240,240,240,48,3,3,18,48,240,48,48,48,3,3,18,58,240,240,176,58,3,3,18,112,240,240,240,48,3
+				db	3,18,112,240,240,240,176,3,3,18,112,255,255,240,176,3,3,18,48,255,240,240,176,3,3,18,53,112,240,240,176,3
+				db	3,18,48,240,240,255,176,3,3,18,48,112,240,240,176,3,3,18,112,240,240,240,176,3,3,66,48,112,176,240,176,3
+				db	3,18,112,240,240,48,48,3,3,18,48,48,48,53,48,3,3,66,53,53,63,48,48,3,3,18,48,48,48,48,48,3
+				db	3,66,48,48,48,48,96,3,3,66,144,144,96,48,192,3,3,3,192,192,192,192,129,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+	qdisco
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,128,192,128,129,3,3,3,3,192,96,128,192,3,3,3,66,192,96,192,192,129,3
+				db	3,66,192,192,64,234,192,3,3,192,132,192,66,72,192,3,3,192,132,132,192,64,192,3,3,192,192,148,12,144,170,129
+				db	66,192,192,64,132,144,128,129,66,144,192,72,192,192,132,129,66,144,192,66,192,192,192,192,66,192,192,192,192,64,192,192
+				db	192,192,72,192,12,64,72,192,192,132,132,104,72,234,12,192,192,132,148,104,192,72,72,192,148,132,72,104,192,213,192,192
+				db	148,213,192,192,192,128,213,192,148,213,192,192,72,132,213,192,192,192,192,72,66,192,128,192,192,192,192,72,192,12,192,192
+				db	66,192,192,192,192,12,192,129,66,129,192,192,72,192,66,129,66,129,192,192,191,104,66,129,66,192,192,72,234,104,66,129
+				db	3,192,192,192,192,192,192,3,3,66,148,192,128,192,192,3,3,66,192,132,192,192,192,3,3,66,192,192,192,192,129,3
+				db	3,3,192,192,192,192,3,3,3,3,192,192,192,192,3,3
+	qcsik
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,2,0,0,1,3,3,3,3,0,0,0,0,3,3,3,2,0,0,0,0,1,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,0,0,0,0,0,0,3,3,0,0,0,0,0,0,3
+				db	3,240,240,240,240,240,240,3,3,240,240,240,240,240,240,3,2,0,0,0,0,0,0,1,2,0,0,0,0,0,0,1
+				db	6,12,12,12,12,12,12,9,6,12,12,12,12,12,12,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+				db	255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+				db	6,12,12,12,12,12,12,9,6,12,12,12,12,12,12,9,2,0,0,0,0,0,64,1,2,0,0,0,0,0,0,1
+				db	3,240,240,240,240,240,240,3,3,240,240,240,240,240,240,3,3,0,0,0,0,0,0,3,3,2,0,0,0,0,1,3
+				db	3,3,0,0,0,0,3,3,3,3,0,0,0,0,3,3
+	qstar
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,3,3,171,3,3,3,3,3,3,3,169,3,3,3,3,3,3,3,125,3,3,3
+				db	3,3,3,86,124,3,3,3,3,3,3,86,124,3,3,3,3,3,3,188,124,3,3,3,3,3,3,188,252,171,3,3
+				db	3,3,3,188,252,169,3,3,3,3,126,60,188,253,171,3,3,86,252,60,188,252,252,171,3,126,188,60,188,60,252,169
+				db	3,188,60,124,252,252,252,169,3,252,62,124,252,252,252,43,3,86,63,60,252,252,252,3,3,86,188,60,124,252,189,3
+				db	3,3,60,60,61,252,189,3,3,3,60,60,124,126,43,3,3,3,188,60,124,189,3,3,3,3,23,60,124,252,3,3
+				db	3,3,126,60,60,252,43,3,3,3,126,60,60,252,43,3,3,3,254,124,124,252,169,3,3,3,252,188,124,124,169,3
+				db	3,3,252,125,188,60,169,3,3,3,188,124,86,60,169,3,3,3,188,169,3,62,169,3,3,3,254,3,3,23,43,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+	qstar2
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,169,3,3,3,3,3,3,3,169,3,3,3
+				db	3,3,3,3,252,3,3,3,3,3,3,86,126,3,3,3,3,3,3,86,126,3,3,3,3,3,3,189,126,3,3,3
+				db	3,3,3,189,63,169,3,3,3,3,3,189,63,169,3,3,3,3,189,63,63,63,169,3,3,86,63,63,63,63,63,169
+				db	3,189,63,63,63,63,63,169,3,189,63,63,63,63,63,169,3,189,63,63,63,63,63,169,3,86,63,63,63,63,63,169
+				db	3,86,63,63,63,63,126,3,3,86,63,63,63,63,126,3,3,3,189,63,63,63,169,3,3,3,86,63,63,126,3,3
+				db	3,3,86,63,63,126,3,3,3,3,189,63,63,63,169,3,3,3,189,63,63,63,169,3,3,3,189,63,63,63,169,3
+				db	3,3,189,63,63,63,169,3,3,3,189,63,63,63,169,3,3,3,189,126,86,63,169,3,3,3,189,169,3,189,169,3
+				db	3,3,252,3,3,86,169,3,3,3,3,3,3,3,3,3
+	qbomb
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,3,22,28,3,3,3,3,3,3,124,92,169,3,3,3,60,86,44,28,60,190,3
+				db	6,172,28,44,124,252,188,41,22,172,28,60,124,252,60,41,86,12,60,44,252,252,60,41,22,28,60,60,28,255,190,41
+				db	6,60,60,188,44,125,190,169,86,60,252,188,44,28,190,41,6,28,252,253,60,255,60,169,86,60,253,254,60,125,60,169
+				db	22,60,253,254,60,93,252,169,22,28,124,254,255,60,60,169,6,28,60,125,255,60,60,169,22,172,60,124,174,93,60,169
+				db	6,188,124,252,172,92,60,9,12,60,124,252,172,92,60,169,3,28,124,252,172,92,172,169,3,172,92,252,172,12,92,41
+				db	3,172,92,252,252,12,124,41,3,188,124,124,12,92,12,172,3,252,28,60,12,12,12,172,3,188,124,60,60,92,28,60
+				db	3,22,60,60,44,60,12,172,3,6,124,60,60,124,41,9,3,3,252,252,188,44,41,3,3,3,86,60,60,60,3,3
+				db	3,3,86,44,28,188,3,3,3,3,6,12,3,3,3,3
+	q1
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,7,15,15,7,3,3,3
+				db	3,7,63,107,135,63,43,3,3,7,47,107,15,3,3,3,3,7,15,15,15,3,3,3,3,7,47,15,15,63,43,3
+				db	3,7,15,15,135,3,3,3,3,23,63,63,23,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+	q2
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,252,254,255,255,3,3,3,3,252,252,252,253,3,3,3,3,124,252,252,252,3,3,3,3,252,252,252,188,3,3
+				db	3,3,124,252,60,252,3,3,3,3,124,252,252,188,3,3,3,3,124,188,60,188,3,3,3,3,60,252,252,188,3,3
+				db	3,3,124,60,60,60,3,3,3,3,22,41,22,41,3,3,3,3,23,3,3,43,3,3,3,3,23,3,3,43,3,3
+				db	3,3,23,3,3,43,3,3,3,3,23,3,3,43,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+	q3
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,9,3,3,3,3,3,3,6,61,3,3,3
+				db	3,3,3,12,60,43,3,3,3,3,3,28,60,41,3,3,3,3,3,12,60,41,3,3,3,3,3,12,28,43,3,3
+				db	3,3,6,12,60,62,3,3,3,3,6,12,28,60,3,3,3,3,23,9,9,61,3,3,3,3,23,3,3,23,3,3
+				db	3,3,43,3,3,3,43,3,3,23,3,3,3,3,23,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+	q4
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,66,129,3,3,3,3,3,3,66,43,3,3,3,3,3,3,23,43,3,3,3
+				db	3,3,3,23,129,3,3,3,3,3,3,63,63,3,3,3,3,3,66,192,192,129,3,3,3,3,66,192,192,129,3,3
+				db	3,3,3,63,63,3,3,3,3,3,3,63,63,3,3,3,3,3,3,63,63,3,3,3,3,3,3,63,63,3,3,3
+				db	3,3,3,63,63,3,3,3,3,3,3,63,63,3,3,3,3,3,3,63,63,3,3,3,3,3,23,63,63,43,3,3
+				db	3,3,66,192,192,129,3,3,3,3,3,63,63,3,3,3,3,3,3,66,129,3,3,3,3,3,3,23,129,3,3,3
+				db	3,3,3,23,129,3,3,3,3,3,3,23,129,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+	q5
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,66,3,192,23,3,3
+				db	3,3,66,192,63,192,3,3,3,3,66,149,192,106,3,3,3,192,192,192,192,192,192,3,3,3,66,192,192,192,3,3
+				db	3,3,66,192,192,192,3,3,3,3,66,3,192,66,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+	q6
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,23,63,53,63,3,3
+				db	3,3,23,58,33,3,3,3,3,3,23,48,33,3,3,3,3,3,23,58,33,3,3,3,3,3,23,48,33,3,3,3
+				db	3,3,23,58,33,3,3,3,3,3,23,48,33,3,3,3,3,3,18,48,33,3,3,3,3,3,23,48,33,3,3,3
+				db	3,3,18,48,33,3,3,3,3,3,18,48,33,3,3,3,3,3,18,63,33,3,3,3,3,3,18,48,53,63,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+	qdisco2
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,128,192,128,129,3,3,3,3,192,96,128,192,3,3,3,66,192,96,192,192,129,3
+				db	3,66,192,192,64,234,192,3,3,192,132,192,66,72,192,3,3,192,132,132,192,64,192,3,3,192,192,148,12,144,170,129
+				db	66,192,192,64,132,144,128,129,66,144,192,72,192,192,132,129,66,144,192,66,192,192,192,192,66,192,192,192,192,64,192,192
+				db	192,192,72,192,12,64,72,192,192,132,132,104,72,234,12,192,192,132,148,104,192,72,72,192,148,132,72,104,192,213,192,192
+				db	148,213,192,192,192,128,213,192,148,213,192,192,72,132,213,192,192,192,192,72,66,192,128,192,192,192,192,72,192,12,192,192
+				db	66,192,192,192,192,12,192,129,66,129,192,192,72,192,66,129,66,129,192,192,191,104,66,129,66,192,192,72,234,104,66,129
+				db	3,192,192,192,192,192,192,3,3,66,148,192,128,192,192,3,3,66,192,132,192,192,192,3,3,66,192,192,192,192,129,3
+				db	3,3,192,192,192,192,3,3,3,3,192,192,192,192,3,3
+	qcsik2
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,2,0,0,1,3,3,3,3,0,0,0,0,3,3,3,2,0,0,0,0,1,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,0,0,0,0,0,0,3,3,0,0,0,0,0,0,3
+				db	3,240,240,240,240,240,240,3,3,240,240,240,240,240,240,3,2,0,0,0,0,0,0,1,2,0,0,0,0,0,0,1
+				db	6,12,12,12,12,12,12,9,6,12,12,12,12,12,12,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+				db	255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+				db	6,12,12,12,12,12,12,9,6,12,12,12,12,12,12,9,2,0,0,0,0,0,64,1,2,0,0,0,0,0,0,1
+				db	3,240,240,240,240,240,240,3,3,240,240,240,240,240,240,3,3,0,0,0,0,0,0,3,3,2,0,0,0,0,1,3
+				db	3,3,0,0,0,0,3,3,3,3,0,0,0,0,3,3
+	qstar22
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,3,3,171,3,3,3,3,3,3,3,169,3,3,3,3,3,3,3,125,3,3,3
+				db	3,3,3,86,124,3,3,3,3,3,3,86,124,3,3,3,3,3,3,188,124,3,3,3,3,3,3,188,252,171,3,3
+				db	3,3,3,188,252,169,3,3,3,3,126,60,188,253,171,3,3,86,252,60,188,252,252,171,3,126,188,60,188,60,252,169
+				db	3,188,60,124,252,252,252,169,3,252,62,124,252,252,252,43,3,86,63,60,252,252,252,3,3,86,188,60,124,252,189,3
+				db	3,3,60,60,61,252,189,3,3,3,60,60,124,126,43,3,3,3,188,60,124,189,3,3,3,3,23,60,124,252,3,3
+				db	3,3,126,60,60,252,43,3,3,3,126,60,60,252,43,3,3,3,254,124,124,252,169,3,3,3,252,188,124,124,169,3
+				db	3,3,252,125,188,60,169,3,3,3,188,124,86,60,169,3,3,3,188,169,3,62,169,3,3,3,254,3,3,23,43,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+	qstar23
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,169,3,3,3,3,3,3,3,169,3,3,3
+				db	3,3,3,3,252,3,3,3,3,3,3,86,126,3,3,3,3,3,3,86,126,3,3,3,3,3,3,189,126,3,3,3
+				db	3,3,3,189,63,169,3,3,3,3,3,189,63,169,3,3,3,3,189,63,63,63,169,3,3,86,63,63,63,63,63,169
+				db	3,189,63,63,63,63,63,169,3,189,63,63,63,63,63,169,3,189,63,63,63,63,63,169,3,86,63,63,63,63,63,169
+				db	3,86,63,63,63,63,126,3,3,86,63,63,63,63,126,3,3,3,189,63,63,63,169,3,3,3,86,63,63,126,3,3
+				db	3,3,86,63,63,126,3,3,3,3,189,63,63,63,169,3,3,3,189,63,63,63,169,3,3,3,189,63,63,63,169,3
+				db	3,3,189,63,63,63,169,3,3,3,189,63,63,63,169,3,3,3,189,126,86,63,169,3,3,3,189,169,3,189,169,3
+				db	3,3,252,3,3,86,169,3,3,3,3,3,3,3,3,3
+	qbomb2
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,83,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,83,3,3,163,3
+				db	23,3,3,83,3,3,163,3,83,171,3,243,3,23,163,3,3,163,3,243,3,87,3,3,3,3,83,251,3,247,3,3
+				db	3,3,83,251,3,183,3,3,3,3,87,183,3,83,163,3,3,3,247,163,3,3,163,3,3,3,247,163,163,3,163,3
+				db	171,83,255,243,163,3,163,3,3,83,255,247,171,3,3,3,3,83,255,255,163,3,3,3,3,23,243,247,127,3,3,3
+				db	3,3,3,247,247,3,3,3,3,3,83,251,83,3,43,3,3,83,83,251,83,171,163,3,83,163,83,171,3,163,3,3
+				db	83,3,87,163,3,3,3,3,83,3,247,3,3,3,3,3,23,3,247,83,171,3,3,3,3,3,247,83,171,3,87,3
+				db	3,3,243,83,171,3,83,3,3,3,163,87,43,3,83,3,3,83,3,83,3,3,3,3,3,83,3,83,3,3,3,3
+				db	3,83,3,3,3,3,3,3,3,183,3,3,3,3,3,3
+	qProbaSprite
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+				db	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+				db	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+				db	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+				db	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+				db	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+				db	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+				db	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	qkeret
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204
+				db	204,0,0,0,0,0,0,204,204,0,0,0,0,0,0,204,204,0,0,0,0,0,0,204,204,0,0,0,0,0,0,204
+				db	204,0,0,0,0,0,0,204,204,0,0,0,0,0,0,204,204,0,0,0,0,0,0,204,204,0,0,0,0,0,0,204
+				db	204,0,0,0,0,0,0,204,204,0,0,0,0,0,0,204,204,0,0,0,0,0,0,204,204,0,0,0,0,0,0,204
+				db	204,0,0,0,0,0,0,204,204,0,0,0,0,0,0,204,204,0,0,0,0,0,0,204,204,0,0,0,0,0,0,204
+				db	204,0,0,0,0,0,0,204,204,0,0,0,0,0,0,204,204,0,0,0,0,0,0,204,204,0,0,0,0,0,0,204
+				db	204,0,0,0,0,0,0,204,204,0,0,0,0,0,0,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204
+				db	204,204,204,204,204,204,204,204,204,204,204,204,204,204,204,204
+	qkeret2
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255
+				db	255,0,0,0,0,0,0,255,255,0,0,0,0,0,0,255,255,0,0,0,0,0,0,255,255,0,0,0,0,0,0,255
+				db	255,0,0,0,0,0,0,255,255,0,0,0,0,0,0,255,255,0,0,0,0,0,0,255,255,0,0,0,0,0,0,255
+				db	255,0,0,0,0,0,0,255,255,0,0,0,0,0,0,255,255,0,0,0,0,0,0,255,255,0,0,0,0,0,0,255
+				db	255,0,0,0,0,0,0,255,255,0,0,0,0,0,0,255,255,0,0,0,0,0,0,255,255,0,0,0,0,0,0,255
+				db	255,0,0,0,0,0,0,255,255,0,0,0,0,0,0,255,255,0,0,0,0,0,0,255,255,0,0,0,0,0,0,255
+				db	255,0,0,0,0,0,0,255,255,0,0,0,0,0,0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255
+				db	255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255
+	qkeret3
+				db	8			; A sprite szélessége byte-okban
+				db	30			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,0,0,0,0,0,0,3,3,0,0,0,0,0,0,3,3,0,0,0,0,0,0,3,3,0,0,0,0,0,0,3
+				db	3,0,0,0,0,0,0,3,3,0,0,0,0,0,0,3,3,0,0,0,0,0,0,3,3,0,0,0,0,0,0,3
+				db	3,0,0,0,0,0,0,3,3,0,0,0,0,0,0,3,3,0,0,0,0,0,0,3,3,0,0,0,0,0,0,3
+				db	3,0,0,0,0,0,0,3,3,0,0,0,0,0,0,3,3,0,0,0,0,0,0,3,3,0,0,0,0,0,0,3
+				db	3,0,0,0,0,0,0,3,3,0,0,0,0,0,0,3,3,0,0,0,0,0,0,3,3,0,0,0,0,0,0,3
+				db	3,0,0,0,0,0,0,3,3,0,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+	qministar
+				db	1			; A sprite szélessége byte-okban
+				db	4			; A sprite magassága
+				db	252,252,252,252
+	qkezdo3
+				db	46			; A sprite szélessége byte-okban
+				db	29			; A sprite magassága
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,67,215,171,215
+				db	171,3,195,255,3,67,215,3,215,171,195,215,255,3,67,255,171,3,67,215,171,255,171,195,215,255,3,67,255,67,255,171
+				db	3,215,171,3,67,255,67,255,67,171,67,195,131,195,171,67,195,195,171,67,195,171,195,171,195,195,195,171,67,215,171,3
+				db	67,195,131,195,171,195,195,195,171,67,215,67,215,171,67,195,255,3,67,195,67,215,67,131,67,195,194,195,131,67,195,195
+				db	171,67,195,171,195,171,195,195,195,171,67,195,171,3,66,195,194,195,131,195,195,195,131,67,215,67,195,171,195,195,195,171
+				db	67,195,67,215,67,131,67,195,194,195,131,195,195,195,131,67,195,171,195,171,195,215,195,215,67,195,171,3,66,195,194,195
+				db	131,195,195,195,215,67,215,67,195,171,195,195,195,131,67,195,67,215,67,131,67,195,194,195,3,195,215,195,215,67,195,171
+				db	195,171,195,171,195,215,67,195,131,3,66,195,195,195,3,195,195,67,195,67,215,67,195,171,193,195,195,131,67,195,67,215
+				db	66,131,67,195,195,195,3,195,131,193,215,67,195,171,195,171,195,171,195,215,67,195,131,3,66,195,195,195,3,195,131,67
+				db	195,67,215,67,195,171,195,131,195,131,67,195,67,195,66,131,66,195,195,195,3,195,131,195,215,67,195,131,193,171,195,131
+				db	195,215,67,195,131,3,66,195,195,195,3,195,171,67,195,67,215,66,195,171,195,131,195,131,67,195,66,215,66,131,66,195
+				db	195,195,3,195,131,193,195,67,195,194,195,171,195,131,195,195,66,195,131,3,66,195,195,194,3,195,171,67,195,67,195,67
+				db	195,171,193,131,131,131,67,195,66,195,66,131,66,195,195,131,3,195,131,193,215,67,195,195,195,171,195,131,195,215,67,195
+				db	131,3,66,195,195,131,3,193,171,67,195,67,195,66,195,131,193,215,3,3,66,195,66,195,66,131,66,195,195,131,3,193
+				db	131,193,195,67,195,195,195,171,195,131,195,215,66,195,131,3,66,195,195,3,3,195,215,195,195,67,195,66,195,131,193,195
+				db	3,3,67,195,195,195,66,131,66,195,195,3,3,193,131,193,195,67,195,195,195,171,195,131,195,195,67,195,131,3,66,195
+				db	194,3,3,195,195,195,131,67,195,66,195,131,193,195,171,3,66,195,195,195,66,131,66,195,195,3,3,193,131,193,195,67
+				db	195,195,195,171,195,131,195,215,66,195,131,3,66,195,131,3,3,193,195,195,129,67,195,67,195,131,66,195,215,3,66,195
+				db	195,195,66,131,66,195,195,3,3,193,131,193,195,67,195,195,195,171,195,131,193,195,66,195,131,3,66,195,131,3,3,195
+				db	195,195,3,67,195,66,195,131,3,195,195,171,66,195,195,195,66,131,66,195,195,171,3,193,131,193,195,67,195,195,195,171
+				db	195,131,193,195,66,195,131,3,66,195,215,3,3,195,195,195,131,67,195,66,195,131,3,193,195,171,66,195,195,195,66,131
+				db	66,195,195,215,3,193,131,193,195,66,195,195,195,171,195,131,193,195,66,195,131,3,66,195,195,3,3,193,195,195,131,67
+				db	195,66,195,131,3,67,195,131,66,195,66,195,66,131,66,195,195,215,3,193,131,193,195,66,195,195,195,171,195,131,193,195
+				db	66,195,131,3,66,195,195,195,3,193,195,195,195,67,195,66,195,131,3,3,195,171,66,195,66,195,66,131,66,195,195,195
+				db	3,193,131,193,195,67,195,195,195,131,195,131,193,195,66,195,131,3,66,195,195,195,3,193,195,195,195,67,195,66,195,131
+				db	215,171,195,131,66,195,66,195,66,131,66,195,195,195,3,193,129,193,195,66,195,195,195,131,195,131,193,195,66,195,131,3
+				db	66,195,195,195,3,193,194,195,195,67,194,66,195,131,195,171,195,171,66,195,66,195,66,131,66,195,195,195,3,193,131,193
+				db	195,66,195,193,195,131,195,131,193,195,66,195,131,3,66,195,195,195,3,193,194,193,195,67,195,66,195,131,195,131,195,131
+				db	66,195,66,195,66,131,66,195,195,195,131,193,129,193,195,67,195,67,195,131,195,129,193,195,66,195,131,3,66,195,195,195
+				db	131,193,131,66,195,67,194,66,195,131,195,131,195,131,66,195,66,195,3,3,66,195,195,195,131,193,194,195,195,66,195,66
+				db	195,131,195,194,195,195,66,195,131,3,66,195,195,195,131,193,131,66,195,66,195,193,195,129,193,131,195,131,66,195,66,195
+				db	67,171,66,195,194,195,131,192,195,195,131,66,195,66,195,131,195,195,195,194,66,195,131,3,66,195,194,195,131,193,131,66
+				db	195,66,193,195,195,3,193,131,195,171,66,195,66,195,67,131,66,195,194,195,131,66,195,195,131,66,195,66,195,131,195,195
+				db	195,131,66,195,131,3,66,195,194,195,131,193,131,67,195,3,193,195,195,3,193,195,195,171,66,195,66,195,66,131,66,193
+				db	131,193,131,66,193,195,129,66,195,66,193,131,194,195,195,129,66,193,131,3,66,193,131,193,131,192,131,66,195,3,192,195
+				db	194,3,66,195,195,171,66,195,66,193,66,131,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+				db	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+
+	;}
+	;{   A Scene-ek adatai (Automatikusan beemelve!)
+	SceneCount		db 	0		; Érvénytelen adatok, csak azért kellenek, hogy a dt_80lib beforduljon
+	SceneIndexArray
+				dw	0
+	SceneBaseAddr
+				db	0
+	;}
+
+
+#endasm
+#pragma rem END_GFX_DATA
+//}
+
+
