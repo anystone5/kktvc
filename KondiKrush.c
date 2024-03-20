@@ -1,7 +1,3 @@
-//címkép alsó fele
-//creditsen billenytűkódo
-
-
 #options
 #define DB_TILT_EXTRA_WIDTH
 #define DB_TILT_MIRROR
@@ -277,6 +273,11 @@ MainScreen()
 	ptr = gameObjects;
  
 	DbCopyToFullScreen();
+	DrawCoolString(18, 75, "PORTED EDITION", 10);
+
+	DbSetFontParam(FNT_COLOR, 5); 
+	DbDrawStrEx(18, 75, "PORTED EDITION");
+
 	/*
 	backPtr = snowBack;
 	for(i=0;i<10;i++)
@@ -317,6 +318,14 @@ MainScreen()
 
 Credits()
 {
+	char cp,op,np,dp,ap;
+
+	cp=0;
+	op=0;
+	np=0;
+	dp=0;
+	ap=0;
+
 	ClearScreen();
 
 	DrawCoolString(22,0, "KONDI KRUSH!", 1);
@@ -326,7 +335,28 @@ Credits()
 	DrawCoolString(0,120, "GFX: NORBICSEK", 1);
 	DrawCoolString(23, 230, "- SPACE -", 5);
 
-	WaitForKeyPress(KEY_SPACE);
+	while(!IsKeyDown(KEY_SPACE)) 
+	{
+		if(IsKeyDown(KEY_C)) cp=1;
+		if(IsKeyDown(KEY_O) && cp==1) op=1; 
+		if(IsKeyDown(KEY_N) && op==1) np=1;
+		if(IsKeyDown(KEY_D) && np==1) dp=1;
+		if(IsKeyDown(KEY_I) && dp==1)  
+		{
+			gamemode=1;
+			DrawCoolString(22,0, "KONDI KRUSH!", 1);
+		};
+		
+		if(IsKeyDown(KEY_A) && cp==1) ap=1; 
+		if(IsKeyDown(KEY_N) && ap==1) np=1;
+		if(IsKeyDown(KEY_D) && np==1) dp=1;
+		if(IsKeyDown(KEY_Y) && dp==1)  
+		{
+			gamemode=0;
+			DrawCoolString(22,0, "KONDI KRUSH!", 1);
+		};
+	}
+
 	MainScreen();
 }
 
@@ -725,7 +755,7 @@ DrawTable(char withWait, char fast )
 	lastposx = posx;
 	lastposy = posy;
 	
-	for(i=0;i<SN;i++)
+	for(i=0;i<40;i++)
 	{
 		lastDrawnlevel[i] = actualLevel[i];
 	}
