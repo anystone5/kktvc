@@ -42,21 +42,18 @@
 #define ROBOT_BACK_SIZE 66
 char *backPtr;
 
-//#define VTVC
-#define EP
-
-#ifdef EP
+#ifdef EP128
 	#define GFX_COLOR_RED 1
 	#define GFX_COLOR_YELLOW 2
 	#define GFX_COLOR_WHITE 7
-	#define GFX_COLOR_BLACK 8
+	#define GFX_COLOR_BLACK 0
 	#define GFX_COLOR_DARKRED 9 
 	#define GFX_COLOR_DARKBLUE 12
 	#define GFX_COLOR_GRAY 15
 	#define GFX_COLOR_DARKPURPLE 5
 #endif
 
-#ifdef VTVC
+#ifdef TVC
 	#define GFX_COLOR_RED COLOR_RED
 	#define GFX_COLOR_YELLOW COLOR_YELLOW
 	#define GFX_COLOR_WHITE COLOR_WHITE
@@ -232,7 +229,7 @@ main()
 	//for (i=0;i<36;i++) levels[i].score=100;
 
 	music=1;	
-	SetBorder(COLOR_BLACK);
+	SetBorder(GFX_COLOR_DARKBLUE);
 	DbInitFont(KKF);
 	DbInitGameLib(2, gameObjects, gIndex2, SN);
 	DbPageFullRamVid();
@@ -356,7 +353,8 @@ Credits()
 	DrawCoolString(0,80, "GFX: NORBICSEK", 1);
 	DrawCoolString(0,100, "MUSIC: REI AND ANYSTONE", 1);
 	DrawCoolString(0,120, "POWERED BY DEVTOOL", 1);
-	DrawCoolString(23, 230, "- SPACE -", 5);
+	DrawCoolString(26,220, "ANYSTONE GAMES 2022", 1);
+	DrawCoolString(40,230, "(2025.02.26)", 1);
 
 	while(!IsKeyDown(KEY_SPACE)) 
 	{
@@ -572,7 +570,7 @@ LevelInfo(int index)
 //{-------------------------- DrawCoolString --------------------------------
 DrawCoolString(int x, int y, char* text, int textSpeed)
 {
-	DrawCooStringPart(x, y, text, textSpeed, GFX_COLOR_BLACK); 
+	DrawCooStringPart(x, y, text, textSpeed, GFX_COLOR_DARKBLUE); 
 	DrawCooStringPart(x, y, text, textSpeed, GFX_COLOR_DARKRED); 
 	DrawCooStringPart(x, y, text, textSpeed, GFX_COLOR_RED); 
 	DrawCooStringPart(x, y, text, textSpeed, GFX_COLOR_YELLOW); 
@@ -1575,7 +1573,7 @@ ItCallBack()
 
 
 
-#ifdef VTVC
+#ifdef TVC
 //{	A grafikus munkaasztalból importált adatok.
 #pragma rem START_GFX_DATA
 
@@ -1946,7 +1944,7 @@ ItCallBack()
 #endif
 
 
-#ifdef EP
+#ifdef EP128
 //{	A grafikus munkaasztalból importált adatok.
 
 #pragma rem START_GFX_DATA
